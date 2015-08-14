@@ -1,0 +1,22 @@
+//json5
+{
+    "folders":
+    [
+        {
+            "folder_exclude_patterns":
+            [
+                "node_modules"
+            ],
+            "file_exclude_patterns": [],
+            "path": "."
+        },
+    ],
+    "build_systems":
+    [
+        {
+            "name": "Run Example",
+            "file_regex": "^(?:    at [^(]+\\()?([^ \n\r]+)\\:(\\d+)(?:\\:(\\d+)\\))?$",
+            "cmd": ["node", "example.js"]
+        }
+    ]
+}

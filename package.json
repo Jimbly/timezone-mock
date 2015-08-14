@@ -1,0 +1,26 @@
+{
+  "name": "timezone-mock",
+  "version": "0.0.0",
+  "description": "A JavaScript library to mock the local timezone.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jimbly/timezone-mock.git"
+  },
+  "keywords": [
+    "timezone",
+    "mock",
+    "date",
+    "dst",
+    "daylight",
+    "saving",
+    "savings",
+    "time"
+  ],
+  "author": "Jimb Esser (https://github.com/Jimbly/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jimbly/timezone-mock/issues"
+  },
+  "homepage": "https://github.com/Jimbly/timezone-mock"
+}
