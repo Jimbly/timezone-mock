@@ -32,3 +32,16 @@ assert.equal(1425810600000, new Date(2015, 2, 8, 3, 30, 0, 0).getTime());
 test_str = '2014-11-02 01:00:00.000';
 assert.equal(1414915200000, new Date(test_str).getTime());
 assert.equal(1414915200000, new Date(2014, 10, 2, 1, 0, 0, 0).getTime());
+
+//////////////////////////////////////////////////////////////////////////
+// Test UTC/non-local timezone constructors
+assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869').getTime());
+assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
+assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 Z').getTime());
+assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 -00:00').getTime());
+assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 +00:00').getTime());
+assert.equal(1495821155869, new Date('2017-05-26 18:52:35.869 +01:00').getTime());
+assert.equal(1495821155869, new Date('2017-05-26 10:52:35.869 -07:00').getTime());
+assert.equal(1495821155000, new Date('2017-05-26T17:52:35').getTime());
+assert.equal(1495821155000, new Date('2017-05-26 17:52:35 +00:00').getTime());
+assert.equal(1495821155000, new Date('2017-05-26 10:52:35 -07:00').getTime());
