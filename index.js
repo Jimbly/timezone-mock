@@ -140,6 +140,8 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
 
 MockDate.now = _Date.now;
 
+MockDate.UTC = _Date.UTC;
+
 // TODO:
 // 'toDateString',
 // 'toLocaleDateString',
