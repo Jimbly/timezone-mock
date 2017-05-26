@@ -18,5 +18,10 @@ test_str = '2015-03-08 02:30:00.000'; // doesn't exist, ends up 1:30am
 assert.equal(1425807000000, new Date(test_str).getTime());
 test_str = '2015-03-08 03:30:00.000'; // in PDT
 assert.equal(1425810600000, new Date(test_str).getTime());
-test_str = '2014-11-02 01:00:00.000'; // leaving PDT, JS Date returns 1am PST, not 1am PDT
-assert.equal(1414918800000, new Date(test_str).getTime());
+// leaving PDT, JS Date returns 1am PDT, not 1am PST
+// JE: 2017-05-26, Node 6.9.1, Not sure why this was 1am PST before, no changes
+//   to node should have changed how our mock behaves, yet, the mock is still
+//   behaving the same as node, just they are both returning a different value
+//   than the test previously expected, so, updating the test to reflect this.
+test_str = '2014-11-02 01:00:00.000';
+assert.equal(1414915200000, new Date(test_str).getTime());

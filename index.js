@@ -51,7 +51,18 @@ MockDate.prototype.calcTZO = function (ts) {
 
 function passthrough(fn) {
   MockDate.prototype[fn] = function () {
-    return this.d[fn].apply(this.d, arguments);
+    var real_date;
+    if (this instanceof MockDate) {
+      real_date = this.d;
+    } else if (this instanceof _Date) {
+      // console.log calls our prototype to format regular Date objects!
+      // This should only be hit while debugging MockDate itself though, as
+      // there should be no _Date objects in user code when using MockDate.
+      real_date = this;
+    } else {
+      assert(false, 'Unexpected object type');
+    }
+    return real_date[fn].apply(real_date, arguments);
   };
 }
 function localgetter(fn) {
