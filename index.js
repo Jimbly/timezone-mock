@@ -14,8 +14,7 @@ var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|
 var local_date_regex=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
 
 function MockDate(param, month, date, hours, minutes, seconds, milliseconds) {
-  assert.ok(arguments.length <= 1);
-  if (arguments.length) {
+  if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
