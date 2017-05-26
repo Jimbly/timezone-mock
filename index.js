@@ -33,7 +33,8 @@ function MockDate(param, month, date, hours, minutes, seconds, milliseconds) {
     }
   } else {
     var year = param;
-    this.d = new _Date(_Date.UTC(year, month, date, hours, minutes, seconds, milliseconds));
+    this.d = new _Date();
+    this.fromLocal(new _Date(_Date.UTC(year, month, date, hours, minutes, seconds, milliseconds)));
   }
 }
 
