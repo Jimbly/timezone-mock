@@ -14,9 +14,8 @@ var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|
 var date_rfc_2822_regex=/^\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
 
-function MockDate(param) {
-  assert.ok(arguments.length <= 1);
-  if (arguments.length) {
+function MockDate(param, month, date, hours, minutes, seconds, milliseconds) {
+  if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
@@ -34,7 +33,9 @@ function MockDate(param) {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
   } else {
+    var year = param;
     this.d = new _Date();
+    this.fromLocal(new _Date(_Date.UTC(year, month, date, hours, minutes, seconds, milliseconds)));
   }
 }
 
@@ -52,7 +53,18 @@ MockDate.prototype.calcTZO = function (ts) {
 
 function passthrough(fn) {
   MockDate.prototype[fn] = function () {
-    return this.d[fn].apply(this.d, arguments);
+    var real_date;
+    if (this instanceof MockDate) {
+      real_date = this.d;
+    } else if (this instanceof _Date) {
+      // console.log calls our prototype to format regular Date objects!
+      // This should only be hit while debugging MockDate itself though, as
+      // there should be no _Date objects in user code when using MockDate.
+      real_date = this;
+    } else {
+      assert(false, 'Unexpected object type');
+    }
+    return real_date[fn].apply(real_date, arguments);
   };
 }
 function localgetter(fn) {
@@ -140,6 +152,8 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
 };
 
 MockDate.now = _Date.now;
+
+MockDate.UTC = _Date.UTC;
 
 // TODO:
 // 'toDateString',
