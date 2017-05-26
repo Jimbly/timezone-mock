@@ -13,7 +13,7 @@ var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?Z?)?)
 var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|)\d\d\:\d\d)$/;
 var local_date_regex=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
 
-function MockDate(param) {
+function MockDate(param, month, date, hours, minutes, seconds, milliseconds) {
   assert.ok(arguments.length <= 1);
   if (arguments.length) {
     if (param instanceof MockDate) {
@@ -33,7 +33,8 @@ function MockDate(param) {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
   } else {
-    this.d = new _Date();
+    var year = param;
+    this.d = new _Date(year, month, date, hours, minutes, seconds, milliseconds);
   }
 }
 
