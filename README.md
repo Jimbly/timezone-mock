@@ -4,7 +4,7 @@ timezone-mock
 A JavaScript library to mock the local timezone.
 
 This module is useful for testing that code works correctly when run in
-other timezones, especially those which have Daily Saving Time if the
+other timezones, especially those which have Daylight Saving Time if the
 timezone of your test system does not.
 
 When `register` is called, it replaces the global Date constructor with
@@ -46,6 +46,7 @@ Currently supported timezones are:
 * US/Pacific
 * US/Eastern
 * UTC
+
 I found that testing on these three were enough to ensure code worked in
 all timezones (import factor is to test on a timezone with Daylight Saving
 Time if your local timezone does not).
