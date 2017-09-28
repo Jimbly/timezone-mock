@@ -26,7 +26,7 @@ function buggyCode() {
 var result_local = buggyCode();
 timezone_mock.register('US/Pacific');
 var result_pacific = buggyCode();
-timezone_mock.register('US/Pacific');
+timezone_mock.register('US/Eastern');
 var result_eastern = buggyCode();
 assert.equal(result_local, result_pacific); // Might fail
 assert.equal(result_pacific, result_eastern); // Definitely fails
