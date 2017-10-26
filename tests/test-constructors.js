@@ -49,3 +49,10 @@ assert.equal(1495821155000, new Date('2017-05-26 10:52:35 -07:00').getTime());
 //////////////////////////////////////////////////////////////////////////
 // Test some generic properties about the date object
 assert.equal(new Date(2017, 5).getTime(), new Date(2017, 5, 1, 0, 0, 0, 0).getTime());
+
+//////////////////////////////////////////////////////////////////////////
+// Test Brazil timezone oddities
+timezone_mock.register('Brazil/East');
+test_str = '2017-10-15 00:00:00.000'; // Midnight on this day doesn't exist, jumps to 11PM previous day
+assert.equal(1508032800000, new Date(test_str).getTime());
+assert.equal(1508032800000, new Date(2017, 9, 15, 0, 0, 0, 0).getTime());

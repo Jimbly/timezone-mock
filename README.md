@@ -45,11 +45,15 @@ Supported Timezones
 Currently supported timezones are:
 * US/Pacific
 * US/Eastern
+* Brazil/East
 * UTC
 
 I found that testing on these three were enough to ensure code worked in
 all timezones (import factor is to test on a timezone with Daylight Saving
-Time if your local timezone does not).
+Time if your local timezone does not).  Brazil/East has the unique characteristic
+of having the DST transition happen right at midnight, so code that sets a Date
+object to midnight on a particular day and then does operations on that Date
+object is especially vulnerable in that timezone.
 
 Status
 ======
