@@ -15,7 +15,9 @@ var date_rfc_2822_regex=/^\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d (\+|-)\d\d\d\d$/
 var local_date_regex=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
 
 function MockDate(param) {
-  if (arguments.length === 1) {
+  if (arguments.length === 0) {
+    this.d = new _Date()
+  } else if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
