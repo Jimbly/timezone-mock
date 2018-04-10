@@ -9,14 +9,14 @@ var timezone;
 
 var HOUR = 60 * 60 * 1000;
 
-var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?Z?)?)?)?$/;
+var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?Z)?)?)?$/;
 var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|)\d\d\:\d\d)$/;
 var date_rfc_2822_regex=/^\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d (\+|-)\d\d\d\d$/;
-var local_date_regex=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
+var local_date_regex=/^\d\d\d\d-\d\d-\d\d[T ]\d\d\:\d\d\:\d\d(\.\d\d\d)?$/;
 
 function MockDate(param) {
   if (arguments.length === 0) {
-    this.d = new _Date()
+    this.d = new _Date();
   } else if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
@@ -25,7 +25,7 @@ function MockDate(param) {
         this.d = new _Date(param);
       } else if (param.match(local_date_regex)) {
         this.d = new _Date();
-        this.fromLocal(new _Date(param.replace(' ', 'T')));
+        this.fromLocal(new _Date(param.replace(' ', 'T') + 'Z'));
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }

@@ -10,6 +10,15 @@ timezone of your test system does not.
 When `register` is called, it replaces the global Date constructor with
 a mocked Date object which behaves as if it is in the specified timezone.
 
+Note: Node v8.0.0 changed how the string "YYYY-MM-DDTHH:MM:SS" is interpreted.
+It was previously interpreted as a UTC date, but now is a local date. If your
+code is using dates of this format, results will be inconsistent.  timezone-mock
+treats them as a local date, so that it behaves consistently with new versions
+of Node, but that means if you run the tests in here on old versions of node,
+or use the mock on old versions of node, the tests may not be accurate (just
+for parsing dates in the aforementioned format).
+
+
 Usage Example
 =============
 

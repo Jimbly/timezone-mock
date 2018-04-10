@@ -8,7 +8,7 @@ var timezone_mock = require('../');
 //   existent dates (undefined behavior anyway), not sure if this was working
 //   before or not.
 
-if (!new timezone_mock._Date().toString().match(/\(PDT\)|\(PST\)/)) {
+if (!new timezone_mock._Date().toString().match(/\(PDT\)|\(PST\)|\(Pacific Daylight Time\)|\(Pacific Standard Time\)/)) {
   // Because we only have timezone info for a couple timezones, we can only test
   //   this if the timezone we're mocking is the same as the system timezone.
   // In theory this could be extended to be able to test any timezone for which

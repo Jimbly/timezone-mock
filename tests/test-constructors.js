@@ -1,3 +1,5 @@
+// This test should pass regardless of what timezone your local machine is in
+
 var assert = require('assert');
 var timezone_mock = require('../');
 
@@ -33,16 +35,19 @@ test_str = '2014-11-02 01:00:00.000';
 assert.equal(1414915200000, new Date(test_str).getTime());
 assert.equal(1414915200000, new Date(2014, 10, 2, 1, 0, 0, 0).getTime());
 
+// Testing "local" constructors that look like UTC constructors,
+//   This behavior changed on Node v8.0.0
+assert.equal(1420104225678, new Date('2015-01-01T01:23:45.678').getTime());
+assert.equal(1420104225000, new Date('2015-01-01T01:23:45').getTime());
+
 //////////////////////////////////////////////////////////////////////////
 // Test UTC/non-local timezone constructors
-assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869').getTime());
 assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 Z').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 -00:00').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 +00:00').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 18:52:35.869 +01:00').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 10:52:35.869 -07:00').getTime());
-assert.equal(1495821155000, new Date('2017-05-26T17:52:35').getTime());
 assert.equal(1495821155000, new Date('2017-05-26 17:52:35 +00:00').getTime());
 assert.equal(1495821155000, new Date('2017-05-26 10:52:35 -07:00').getTime());
 
