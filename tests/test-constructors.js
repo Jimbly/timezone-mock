@@ -19,6 +19,7 @@ assert.equal(1420104225678 - 3*60*60*1000, new Date(2015, 0, 1, 1, 23, 45, 678).
 timezone_mock.register('US/Pacific');
 test_str = '2015-03-08 01:30:00.000'; // right before entering PDT
 assert.equal(1425807000000, new Date(test_str).getTime());
+assert.equal(new Date(test_str).getTime(), new Date(test_str).valueOf());
 assert.equal(1425807000000, new Date(2015, 2, 8, 1, 30, 0, 0).getTime());
 test_str = '2015-03-08 02:30:00.000'; // doesn't exist, ends up 1:30am
 assert.equal(1425807000000, new Date(test_str).getTime());

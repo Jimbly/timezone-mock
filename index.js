@@ -108,6 +108,7 @@ function localsetter(fn) {
   'toISOString',
   'toJSON',
   'toUTCString',
+  'valueOf',
 ].forEach(passthrough);
 [
   'getDate',
