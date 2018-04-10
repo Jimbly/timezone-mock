@@ -153,6 +153,10 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
   return 'Mockday ' + this.d.toISOString() + ' GMT-0' + this.calcTZO() + '00 (MockDate)';
 };
 
+MockDate.prototype.valueOf = function () {
+  return _Date.prototype.valueOf.call(this.d);
+}
+
 MockDate.now = _Date.now;
 
 MockDate.UTC = _Date.UTC;
