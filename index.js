@@ -9,7 +9,7 @@ var timezone;
 
 var HOUR = 60 * 60 * 1000;
 
-var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?Z)?)?)?$/;
+var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?(Z|[+-]\d\d\:?\d\d))?)?)?$/;
 var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|)\d\d\:\d\d)$/;
 var date_rfc_2822_regex=/^\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex=/^\d\d\d\d-\d\d-\d\d[T ]\d\d\:\d\d\:\d\d(\.\d\d\d)?$/;

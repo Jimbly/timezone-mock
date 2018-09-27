@@ -49,6 +49,9 @@ assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 -00:00').getTime()
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 +00:00').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 18:52:35.869 +01:00').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 10:52:35.869 -07:00').getTime());
+assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869+00:00').getTime());
+assert.equal(1495821155869, new Date('2017-05-26T10:52:35.869-0700').getTime());
+assert.equal(1495821155000, new Date('2017-05-26T17:52:35+00:00').getTime());
 assert.equal(1495821155000, new Date('2017-05-26 17:52:35 +00:00').getTime());
 assert.equal(1495821155000, new Date('2017-05-26 10:52:35 -07:00').getTime());
 
