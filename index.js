@@ -84,6 +84,7 @@ function localsetter(fn) {
     var d = new _Date(this.d.getTime() - this.calcTZO() * HOUR);
     d['setUTC' + fn.slice(3)].apply(d, arguments);
     this.fromLocal(d);
+    return this.getTime();
   };
 }
 [

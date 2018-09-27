@@ -14,10 +14,11 @@ timezone_mock.register('US/Pacific');
 var orig = new timezone_mock._Date(0);
 var mock = new Date(0);
 function doit(fn, val, fails) {
-  orig[fn](val);
-  mock[fn](val);
+  var ret_orig = orig[fn](val);
+  var ret_mock = mock[fn](val);
   console.log(fn, val, orig, mock);
   if (!fails) {
+    assert.equal(ret_orig, ret_mock);
     assert.equal(orig.getTime(), mock.getTime());
     assert.equal(orig.getHours(), mock.getHours());
     assert.equal(orig.getTimezoneOffset(), mock.getTimezoneOffset());
