@@ -164,13 +164,13 @@ MockDate.UTC = _Date.UTC;
 // 'toLocaleTimeString',
 // 'toTimeString',
 
-function register(new_timezone) {
+function register(new_timezone, glob = global) {
   timezone = new_timezone || 'US/Pacific';
-  global.Date = MockDate;
+  glob.Date = MockDate;
 }
 exports.register = register;
 
-function unregister() {
-  global.Date = _Date;
+function unregister(glob = global) {
+  glob.Date = _Date;
 }
 exports.unregister = unregister;
