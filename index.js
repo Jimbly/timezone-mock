@@ -31,6 +31,8 @@ function MockDate(param) {
       }
     } else if (typeof param === 'number') {
       this.d = new _Date(param);
+    } else if (typeof param === 'undefined') {
+      this.d = new _Date();
     } else {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
