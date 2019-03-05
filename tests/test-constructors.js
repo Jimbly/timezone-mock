@@ -41,8 +41,14 @@ assert.equal(1414915200000, new Date(2014, 10, 2, 1, 0, 0, 0).getTime());
 assert.equal(1420104225678, new Date('2015-01-01T01:23:45.678').getTime());
 assert.equal(1420104225000, new Date('2015-01-01T01:23:45').getTime());
 
+// Other local date formats
+assert.equal(1425196800000, new Date('2015/03/01').getTime());
+// assert.equal(1425196800000, new Date('2015/3/1').getTime()); Not handled by use yet
+assert.equal(1425201814000, new Date('2015/03/01 01:23:34').getTime());
+
 //////////////////////////////////////////////////////////////////////////
 // Test UTC/non-local timezone constructors
+assert.equal(1420070400000, new Date('2015-01-01').getTime());
 assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 Z').getTime());
 assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 -00:00').getTime());
