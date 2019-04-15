@@ -145,7 +145,7 @@ MockDate.prototype.setYear = function (yr) {
 };
 
 MockDate.parse = function (dateString) {
-  return _Date.parse(dateString);
+  return new MockDate(dateString).getTime();
 }
 
 MockDate.prototype.getTimezoneOffset = function () {
