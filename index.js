@@ -144,6 +144,10 @@ MockDate.prototype.setYear = function (yr) {
   return this.setFullYear(yr);
 };
 
+MockDate.parse = function (dateString) {
+  return new MockDate(dateString).getTime();
+}
+
 MockDate.prototype.getTimezoneOffset = function () {
   return this.calcTZO() * 60;
 };
