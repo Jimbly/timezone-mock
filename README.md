@@ -60,13 +60,15 @@ Currently supported timezones are:
 * US/Eastern
 * Brazil/East
 * UTC
+* Europe/London
 
 I found that testing on these three were enough to ensure code worked in
-all timezones (import factor is to test on a timezone with Daylight Saving
+all timezones (important factor is to test on a timezone with Daylight Saving
 Time if your local timezone does not).  Brazil/East has the unique characteristic
 of having the DST transition happen right at midnight, so code that sets a Date
 object to midnight on a particular day and then does operations on that Date
-object is especially vulnerable in that timezone.
+object is especially vulnerable in that timezone.  Europe/London is included as
+a timezone that is a positive offset from UTC.
 
 Status
 ======
