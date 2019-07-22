@@ -7,6 +7,9 @@ exports._Date = _Date;
 
 var timezone;
 
+var weekDays = ['Sun', 'Mon','Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
 var HOUR = 60 * 60 * 1000;
 
 var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?(Z|[+-]\d\d\:?\d\d))?)?)?$/;
@@ -163,6 +166,10 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
 MockDate.now = _Date.now;
 
 MockDate.UTC = _Date.UTC;
+
+MockDate.prototype.toDateString = function () {
+  return `${ weekDays[this.getDay()] } ${ months[this.getMonth()] } ${ this.getDate().toString().padStart(2, '0') } ${ this.getFullYear() }`;
+};
 
 // TODO:
 // 'toDateString',
