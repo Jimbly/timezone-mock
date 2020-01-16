@@ -24,7 +24,7 @@ function MockDate(param) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
-      if (param.match(date_iso_8601_regex) || param.match(date_with_offset) || param.match(date_rfc_2822_regex)) {
+      if (param.match(date_iso_8601_regex) || param.match(date_with_offset) || param.match(date_rfc_2822_regex) || param === '') {
         this.d = new _Date(param);
       } else if (param.match(local_date_regex)) {
         this.d = new _Date();
