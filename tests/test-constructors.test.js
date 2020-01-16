@@ -1,6 +1,5 @@
 // This test should pass regardless of what timezone your local machine is in
 
-var assert = require('assert');
 var timezone_mock = require('..');
 
 //////////////////////////////////////////////////////////////////////////
