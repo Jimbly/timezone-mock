@@ -4,6 +4,11 @@ var assert = require('assert');
 var timezone_mock = require('../');
 
 //////////////////////////////////////////////////////////////////////////
+// Test "simple" date constructors
+assert.ok(new Date(), 'Empty constructor not supported');
+assert.ok(new Date(''), 'Constructor with empty string not supported');
+
+//////////////////////////////////////////////////////////////////////////
 // Test date constructors as used by local timezone mode in node-mysql (local strings)
 var test_str = '2015-01-01 01:23:45.678';
 timezone_mock.register('UTC');
@@ -36,7 +41,7 @@ test_str = '2014-11-02 01:00:00.000';
 assert.equal(1414915200000, new Date(test_str).getTime());
 assert.equal(1414915200000, new Date(2014, 10, 2, 1, 0, 0, 0).getTime());
 
-// Testing "local" constructors that look like UTC constructors,
+// Test "local" constructors that look like UTC constructors,
 //   This behavior changed on Node v8.0.0
 assert.equal(1420104225678, new Date('2015-01-01T01:23:45.678').getTime());
 assert.equal(1420104225000, new Date('2015-01-01T01:23:45').getTime());
