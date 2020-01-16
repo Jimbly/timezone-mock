@@ -23,5 +23,11 @@
   "bugs": {
     "url": "https://github.com/Jimbly/timezone-mock/issues"
   },
-  "homepage": "https://github.com/Jimbly/timezone-mock"
+  "homepage": "https://github.com/Jimbly/timezone-mock",
+  "devDependencies": {
+    "jest": "~24.9.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
 }
