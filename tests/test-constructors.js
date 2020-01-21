@@ -54,6 +54,10 @@ test('date constructors as used by local timezone mode in node-mysql (local stri
   //   This behavior changed on Node v8.0.0
   assert.equal(1420104225678, new Date('2015-01-01T01:23:45.678').getTime());
   assert.equal(1420104225000, new Date('2015-01-01T01:23:45').getTime());
+
+  // supports variation of ECMAscript spec for THH:mm
+  // https://www.ecma-international.org/ecma-262/#sec-date-time-string-format
+  assert.equal(1414915200000, new Date('2014-11-02T01:00').getTime());
 });
 
 //////////////////////////////////////////////////////////////////////////
