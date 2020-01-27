@@ -12,9 +12,15 @@ var test = global.test || ((name, tst) => {
 //////////////////////////////////////////////////////////////////////////
 test('"simple" date constructors', function() {
   assert.ok(new Date());
+  assert.ok(new Date(null));
+
   assert.ok(new Date(''));
   assert.ok(new Date('').toString() === 'Invalid Date');
   assert.ok(Number.isNaN(new Date('').getHours()));
+
+  assert.ok(new Date(undefined));
+  assert.ok(new Date(undefined).toString() === 'Invalid Date');
+  assert.ok(Number.isNaN(new Date(undefined).getHours()));
 });
 
 //////////////////////////////////////////////////////////////////////////

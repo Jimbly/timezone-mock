@@ -32,7 +32,7 @@ function MockDate(param) {
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }
-    } else if (typeof param === 'number') {
+    } else if (typeof param === 'number' || param == null) {
       this.d = new _Date(param);
     } else if (typeof param === 'undefined') {
       this.d = new _Date();
