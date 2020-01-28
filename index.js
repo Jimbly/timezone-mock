@@ -32,10 +32,8 @@ function MockDate(param) {
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }
-    } else if (typeof param === 'number') {
+    } else if (typeof param === 'number' || param === null || param === undefined) {
       this.d = new _Date(param);
-    } else if (typeof param === 'undefined') {
-      this.d = new _Date();
     } else {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
@@ -75,6 +73,7 @@ function passthrough(fn) {
 }
 function localgetter(fn) {
   MockDate.prototype[fn] = function () {
+    if (Number.isNaN(this.d.getTime())) return NaN;
     var d = new _Date(this.d.getTime() - this.calcTZO() * HOUR);
     return d['getUTC' + fn.slice(3)]();
   };
@@ -152,6 +151,7 @@ MockDate.parse = function (dateString) {
 }
 
 MockDate.prototype.getTimezoneOffset = function () {
+  if (Number.isNaN(this.d.getTime())) return NaN;
   return this.calcTZO() * 60;
 };
 
@@ -160,6 +160,7 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
     // someone, like util.inspect, calling Date.prototype.toString.call(foo)
     return _Date.prototype.toString.call(this);
   }
+  if (Number.isNaN(this.d.getTime())) return new _Date('').toString();
   return 'Mockday ' + this.d.toISOString() + ' GMT-0' + this.calcTZO() + '00 (MockDate)';
 };
 
@@ -168,11 +169,11 @@ MockDate.now = _Date.now;
 MockDate.UTC = _Date.UTC;
 
 MockDate.prototype.toDateString = function () {
+  if (Number.isNaN(this.d.getTime())) return new _Date('').toDateString();
   return `${ weekDays[this.getDay()] } ${ months[this.getMonth()] } ${ this.getDate().toString().padStart(2, '0') } ${ this.getFullYear() }`;
 };
 
 // TODO:
-// 'toDateString',
 // 'toLocaleDateString',
 // 'toLocaleTimeString',
 // 'toTimeString',
