@@ -3,6 +3,8 @@
 var assert = require('assert');
 var timezone_mock = require('..');
 
+timezone_mock.register();
+
 var test = global.test || ((name, tst) => {
   console.log('TEST:', name, '...');
   tst();
@@ -12,9 +14,15 @@ var test = global.test || ((name, tst) => {
 //////////////////////////////////////////////////////////////////////////
 test('"simple" date constructors', function() {
   assert.ok(new Date());
+  assert.ok(new Date(null));
+
   assert.ok(new Date(''));
   assert.ok(new Date('').toString() === 'Invalid Date');
   assert.ok(Number.isNaN(new Date('').getHours()));
+
+  var invalidDateMadeValid = new Date('')
+  assert.ok(invalidDateMadeValid.setTime(12345) === 12345)
+  assert.ok(!Number.isNaN(invalidDateMadeValid.getHours()));
 });
 
 //////////////////////////////////////////////////////////////////////////
