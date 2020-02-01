@@ -2,6 +2,7 @@
 // node import.js /usr/share/zoneinfo/SystemV/PST8PDT > out.txt
 // node import.js /usr/share/zoneinfo/SystemV/EST5EDT > out.txt
 // node import.js /usr/share/zoneinfo/America/Sao_Paulo > out.txt
+// node import.js /usr/share/zoneinfo/Australia/Adelaide > out.txt
 const assert = require('assert');
 const fs = require('fs');
 

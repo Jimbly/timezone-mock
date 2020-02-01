@@ -61,6 +61,7 @@ Currently supported timezones are:
 * Brazil/East
 * UTC
 * Europe/London
+* Australia/Adelaide
 
 I found that testing on these three were enough to ensure code worked in
 all timezones (important factor is to test on a timezone with Daylight Saving
@@ -68,7 +69,8 @@ Time if your local timezone does not).  Brazil/East has the unique characteristi
 of having the DST transition happen right at midnight, so code that sets a Date
 object to midnight on a particular day and then does operations on that Date
 object is especially vulnerable in that timezone.  Europe/London is included as
-a timezone that is a positive offset from UTC.
+a timezone that is a positive offset from UTC, and Australia/Adelaide as one that
+has a large positive and non-integral offset (+9.5/+10.5).
 
 Status
 ======
