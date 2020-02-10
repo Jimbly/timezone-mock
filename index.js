@@ -170,7 +170,7 @@ MockDate.UTC = _Date.UTC;
 
 MockDate.prototype.toDateString = function () {
   if (Number.isNaN(this.d.getTime())) return new _Date('').toDateString();
-  return `${ weekDays[this.getDay()] } ${ months[this.getMonth()] } ${ this.getDate().toString().padStart(2, '0') } ${ this.getFullYear() }`;
+  return weekDays[this.getDay()] + ' ' + months[this.getMonth()] + ' ' + this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
 };
 
 // TODO:
