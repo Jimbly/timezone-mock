@@ -178,13 +178,27 @@ MockDate.prototype.toDateString = function () {
 // 'toLocaleTimeString',
 // 'toTimeString',
 
-function register(new_timezone, glob = global) {
+function register(new_timezone, glob) {
+  if (!glob) {
+    if (typeof window !== 'undefined') {
+      glob = window;
+    } else {
+      glob = global;
+    }
+  }
   timezone = new_timezone || 'US/Pacific';
   glob.Date = MockDate;
 }
 exports.register = register;
 
-function unregister(glob = global) {
+function unregister(glob) {
+  if (!glob) {
+    if (typeof window !== 'undefined') {
+      glob = window;
+    } else {
+      glob = global;
+    }
+  }
   glob.Date = _Date;
 }
 exports.unregister = unregister;
