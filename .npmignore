@@ -4,3 +4,4 @@ tests
 import.js
 .editorconfig
 .jshintrc
+.eslintrc
