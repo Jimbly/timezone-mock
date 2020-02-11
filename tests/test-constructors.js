@@ -1,3 +1,4 @@
+/* eslint-env es6 */
 // This test should pass regardless of what timezone your local machine is in
 
 var assert = require('assert');
@@ -20,8 +21,8 @@ test('"simple" date constructors', function() {
   assert.ok(new Date('').toString() === 'Invalid Date');
   assert.ok(Number.isNaN(new Date('').getHours()));
 
-  var invalidDateMadeValid = new Date('')
-  assert.ok(invalidDateMadeValid.setTime(12345) === 12345)
+  var invalidDateMadeValid = new Date('');
+  assert.ok(invalidDateMadeValid.setTime(12345) === 12345);
   assert.ok(!Number.isNaN(invalidDateMadeValid.getHours()));
 });
 

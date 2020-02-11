@@ -18,21 +18,21 @@ if (!new timezone_mock._Date().toString().match(/\(PDT\)|\(PST\)|\(Pacific Dayli
 
 timezone_mock.register('US/Pacific');
 
-function test(d) {
-  var ret = [];
-  ret.push(d.getTimezoneOffset());
-  ret.push(d.getHours());
-  d.setTime(new Date('2015-03-08T02:30:11.000Z').getTime());
-  ret.push(d.getTimezoneOffset());
-  ret.push(d.getHours());
-  d.setTime(new Date('2015-03-07T02:30:11.000Z').getTime());
-  ret.push(d.getTimezoneOffset());
-  ret.push(d.getHours());
-  d.setTime(new Date('2015-03-09T02:30:11.000Z').getTime());
-  ret.push(d.getTimezoneOffset());
-  ret.push(d.getHours());
-  return ret;
-}
+// function test(d) {
+//   var ret = [];
+//   ret.push(d.getTimezoneOffset());
+//   ret.push(d.getHours());
+//   d.setTime(new Date('2015-03-08T02:30:11.000Z').getTime());
+//   ret.push(d.getTimezoneOffset());
+//   ret.push(d.getHours());
+//   d.setTime(new Date('2015-03-07T02:30:11.000Z').getTime());
+//   ret.push(d.getTimezoneOffset());
+//   ret.push(d.getHours());
+//   d.setTime(new Date('2015-03-09T02:30:11.000Z').getTime());
+//   ret.push(d.getTimezoneOffset());
+//   ret.push(d.getHours());
+//   return ret;
+// }
 
 var orig = new timezone_mock._Date();
 var mock = new Date();
@@ -45,24 +45,25 @@ var ts = new Date('2013-01-01T00:00:00.000Z').getTime();
 var was_ok = true;
 var last = ts;
 var end = ts + 5*365*24*60*60*1000;
+var ok;
+function check(label) {
+  function check2(fn) {
+    if (orig[fn]() !== mock[fn]()) {
+      ok = false;
+      if (was_ok) {
+        console.log('  ' + fn + ' (' + label + ')', orig[fn](), mock[fn]());
+      }
+    }
+  }
+  check2('getTimezoneOffset');
+  check2('getHours');
+  check2('getTime');
+}
 for (; ts < end; ts += 13*60*1000) {
   orig.setTime(ts);
   mock.setTime(ts);
   assert.equal(orig.toISOString(), mock.toISOString());
-  var ok = true;
-  function check(label) {
-    function check2(fn) {
-      if (orig[fn]() !== mock[fn]()) {
-        ok = false;
-        if (was_ok) {
-          console.log('  ' + fn + ' (' + label + ')', orig[fn](), mock[fn]());
-        }
-      }
-    }
-    check2('getTimezoneOffset');
-    check2('getHours');
-    check2('getTime');
-  }
+  ok = true;
   check('setTime');
   var test = new timezone_mock._Date(ts);
   orig = new timezone_mock._Date('2015-01-01');
@@ -83,7 +84,8 @@ for (; ts < end; ts += 13*60*1000) {
   mock = new Date(str);
   check('constructor ' + str);
   if (was_ok !== ok) {
-    console.log((ok ? 'OK    ' : 'NOT OK') + ' - ' + ts + ' (' + (ts - last) + ') ' + orig.toISOString() + ' (' + orig.toLocaleString() + ')');
+    console.log((ok ? 'OK    ' : 'NOT OK') + ' - ' + ts + ' (' + (ts - last) + ') ' + orig.toISOString() +
+      ' (' + orig.toLocaleString() + ')');
     last = ts;
     was_ok = ok;
   }

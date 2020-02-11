@@ -51,7 +51,7 @@ function randInt(max) {
   return Math.floor(Math.random() * max);
 }
 for (var ii = 0; ii < 100000; ++ii) {
-  switch (randInt(3)) {
+  switch (randInt(3)) { // eslint-disable-line default-case
     case 0:
       doit('setMonth', randInt(12));
       break;

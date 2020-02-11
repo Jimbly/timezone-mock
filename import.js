@@ -1,3 +1,4 @@
+/* eslint-env es6 */
 // Usage: Run and copy into tzdata.js
 // node import.js /usr/share/zoneinfo/SystemV/PST8PDT > out.txt
 // node import.js /usr/share/zoneinfo/SystemV/EST5EDT > out.txt
@@ -24,8 +25,9 @@ for (let ii = 0; ii < 6; ++ii) {
   values[ii] = tzfile.readUInt32BE(idx);
   idx += 4;
 }
-let [ tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt ] = values;
-// console.log(`tzh_ttisgmtcnt:${tzh_ttisgmtcnt} tzh_ttisstdcnt:${tzh_ttisstdcnt} tzh_leapcnt:${tzh_leapcnt} tzh_timecnt:${tzh_timecnt} tzh_typecnt:${tzh_typecnt} tzh_charcnt:${tzh_charcnt}`);
+let [tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt] = values;
+// console.log(`tzh_ttisgmtcnt:${tzh_ttisgmtcnt} tzh_ttisstdcnt:${tzh_ttisstdcnt} tzh_leapcnt:${tzh_leapcnt} ` +
+//   `tzh_timecnt:${tzh_timecnt} tzh_typecnt:${tzh_typecnt} tzh_charcnt:${tzh_charcnt}`);
 
 let transitions = [];
 for (let ii = 0; ii < tzh_timecnt; ++ii) {
@@ -57,9 +59,9 @@ for (let ii = 0; ii < ttinfos.length; ++ii) {
 }
 
 for (let ii = 0; ii < tzh_leapcnt; ++ii) {
-  let time = tzfile.readUInt32BE(idx);
+  /* let time = */tzfile.readUInt32BE(idx);
   idx += 4;
-  let total_leap_seconds = tzfile.readUInt32BE(idx);
+  /* let total_leap_seconds = */tzfile.readUInt32BE(idx);
   idx += 4;
 }
 
@@ -77,7 +79,7 @@ for (let ii = 0; ii < tzh_ttisgmtcnt; ++ii) {
 // console.log(JSON.stringify(ttinfos, undefined, 2));
 
 let cuttoff = new Date('2038').getTime() / 1000; // Things get weird after this in the Linux data, ignore it
-transitions = transitions.filter(trans => trans.time < cuttoff);
+transitions = transitions.filter((trans) => trans.time < cuttoff);
 
 let named = {};
 let out = {
@@ -99,11 +101,11 @@ if (out.transitions[0]) {
   out.transitions.splice(0, 0, 0, out.transitions[3]);
 }
 
-//console.log(out);
+// console.log(out);
 console.log('  {');
-console.log(`    names: [${out.names.map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')}],`);
+console.log(`    names: [${out.names.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')}],`);
 console.log('    transitions: [');
 for (let ii = 0; ii < out.transitions.length; ii += 2) {
-  console.log(`      ${out.transitions[ii]}, ${out.transitions[ii+1]},`);
+  console.log(`      ${out.transitions[ii]}, ${out.transitions[ii + 1]},`);
 }
 console.log('    ],\n  },');

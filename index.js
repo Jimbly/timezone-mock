@@ -7,15 +7,15 @@ exports._Date = _Date;
 
 var timezone;
 
-var weekDays = ['Sun', 'Mon','Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
 var HOUR = 60 * 60 * 1000;
 
-var date_iso_8601_regex=/^\d\d\d\d(-\d\d(-\d\d(T\d\d\:\d\d\:\d\d(\.\d\d\d)?(Z|[+-]\d\d\:?\d\d))?)?)?$/;
-var date_with_offset=/^\d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d(\.\d\d\d)? (Z|(\-|\+|)\d\d\:\d\d)$/;
-var date_rfc_2822_regex=/^\d\d-\w\w\w-\d\d\d\d \d\d\:\d\d\:\d\d (\+|-)\d\d\d\d$/;
-var local_date_regex=/^\d\d\d\d-\d\d-\d\d[T ]\d\d\:\d\d(\:\d\d(\.\d\d\d)?)?$/;
+var date_iso_8601_regex = /^\d\d\d\d(-\d\d(-\d\d(T\d\d:\d\d:\d\d(\.\d\d\d)?(Z|[+-]\d\d:?\d\d))?)?)?$/;
+var date_with_offset = /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(\.\d\d\d)? (Z|(-|\+|)\d\d:\d\d)$/;
+var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
+var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
 
 function MockDate(param) {
   if (arguments.length === 0) {
@@ -24,7 +24,11 @@ function MockDate(param) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
-      if (param.match(date_iso_8601_regex) || param.match(date_with_offset) || param.match(date_rfc_2822_regex) || param === '') {
+      if (param.match(date_iso_8601_regex) ||
+        param.match(date_with_offset) ||
+        param.match(date_rfc_2822_regex) ||
+        param === ''
+      ) {
         this.d = new _Date(param);
       } else if (param.match(local_date_regex)) {
         this.d = new _Date();
@@ -47,12 +51,13 @@ MockDate.prototype.calcTZO = function (ts) {
   var data = tzdata[timezone];
   assert.ok(data, 'Unsupported timezone: ' + timezone);
   ts = (ts || this.d.getTime()) / 1000;
-  for (var ii = 2; ii < data.transitions.length; ii+=2) {
+  for (var ii = 2; ii < data.transitions.length; ii += 2) {
     if (data.transitions[ii] > ts) {
-      return -data.transitions[ii-1];
+      return -data.transitions[ii - 1];
     }
   }
   assert.ok(false, ts);
+  return 0;
 };
 
 function passthrough(fn) {
@@ -73,12 +78,14 @@ function passthrough(fn) {
 }
 function localgetter(fn) {
   MockDate.prototype[fn] = function () {
-    if (Number.isNaN(this.d.getTime())) return NaN;
+    if (Number.isNaN(this.d.getTime())) {
+      return NaN;
+    }
     var d = new _Date(this.d.getTime() - this.calcTZO() * HOUR);
     return d['getUTC' + fn.slice(3)]();
   };
 }
-MockDate.prototype.fromLocal = function(d) {
+MockDate.prototype.fromLocal = function (d) {
   // From a Date object in the fake-timezone where the returned UTC values are
   //   meant to be interpreted as local values.
   this.d.setTime(d.getTime() + this.calcTZO(d.getTime() + this.calcTZO(d.getTime()) * HOUR) * HOUR);
@@ -148,10 +155,12 @@ MockDate.prototype.setYear = function (yr) {
 
 MockDate.parse = function (dateString) {
   return new MockDate(dateString).getTime();
-}
+};
 
 MockDate.prototype.getTimezoneOffset = function () {
-  if (Number.isNaN(this.d.getTime())) return NaN;
+  if (Number.isNaN(this.d.getTime())) {
+    return NaN;
+  }
   return this.calcTZO() * 60;
 };
 
@@ -160,7 +169,9 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
     // someone, like util.inspect, calling Date.prototype.toString.call(foo)
     return _Date.prototype.toString.call(this);
   }
-  if (Number.isNaN(this.d.getTime())) return new _Date('').toString();
+  if (Number.isNaN(this.d.getTime())) {
+    return new _Date('').toString();
+  }
   return 'Mockday ' + this.d.toISOString() + ' GMT-0' + this.calcTZO() + '00 (MockDate)';
 };
 
@@ -169,8 +180,11 @@ MockDate.now = _Date.now;
 MockDate.UTC = _Date.UTC;
 
 MockDate.prototype.toDateString = function () {
-  if (Number.isNaN(this.d.getTime())) return new _Date('').toDateString();
-  return weekDays[this.getDay()] + ' ' + months[this.getMonth()] + ' ' + this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
+  if (Number.isNaN(this.d.getTime())) {
+    return new _Date('').toDateString();
+  }
+  return weekDays[this.getDay()] + ' ' + months[this.getMonth()] + ' ' +
+    this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
 };
 
 // TODO:
