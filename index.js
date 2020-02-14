@@ -47,17 +47,21 @@ function MockDate(param) {
   }
 }
 
+// eslint-disable-next-line consistent-return
 MockDate.prototype.calcTZO = function (ts) {
   var data = tzdata[timezone];
   assert.ok(data, 'Unsupported timezone: ' + timezone);
   ts = (ts || this.d.getTime()) / 1000;
+  if (Number.isNaN(ts)) {
+    return NaN;
+  }
   for (var ii = 2; ii < data.transitions.length; ii += 2) {
     if (data.transitions[ii] > ts) {
       return -data.transitions[ii - 1];
     }
   }
+  // note: should never reach here!
   assert.ok(false, ts);
-  return 0;
 };
 
 function passthrough(fn) {
