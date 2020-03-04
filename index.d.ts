@@ -3,6 +3,7 @@ interface DateHoldingGlobal {
 }
 
 export type TimeZone =
+  'Australia/Adelaide' |
   'Brazil/East' |
   'Europe/London' |
   'US/Eastern' |
