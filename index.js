@@ -176,7 +176,23 @@ MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
   if (Number.isNaN(this.d.getTime())) {
     return new _Date('').toString();
   }
-  return 'Mockday ' + this.d.toISOString() + ' GMT-0' + this.calcTZO() + '00 (MockDate)';
+  var str = [this.d.toISOString() + ' UTC (MockDate: GMT'];
+  var tzo = -this.calcTZO();
+  if (tzo < 0) {
+    str.push('-');
+    tzo *= -1;
+  } else {
+    str.push('+');
+  }
+  str.push(Math.floor(tzo).toString().padStart(2, '0'));
+  tzo -= Math.floor(tzo);
+  if (tzo) {
+    str.push(tzo * 60);
+  } else {
+    str.push('00');
+  }
+  str.push(')');
+  return str.join('');
 };
 
 MockDate.now = _Date.now;
