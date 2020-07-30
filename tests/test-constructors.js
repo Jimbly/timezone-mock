@@ -72,6 +72,7 @@ test('date constructors as used by local timezone mode in node-mysql (local stri
 //////////////////////////////////////////////////////////////////////////
 test('UTC/non-local timezone constructors', function() {
   assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
+  assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869000Z').getTime());
   assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 Z').getTime());
   assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 -00:00').getTime());
   assert.equal(1495821155869, new Date('2017-05-26 17:52:35.869 +00:00').getTime());
