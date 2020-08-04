@@ -1,6 +1,6 @@
 {
   "name": "timezone-mock",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A JavaScript library to mock the local timezone.",
   "main": "index.js",
   "types": "index.d.ts",
