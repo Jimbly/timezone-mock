@@ -97,3 +97,13 @@ test('Brazil timezone oddities', function() {
   assert.equal(1508032800000, new Date(test_str).getTime());
   assert.equal(1508032800000, new Date(2017, 9, 15, 0, 0, 0, 0).getTime());
 });
+
+//////////////////////////////////////////////////////////////////////////
+test('Make sure month May exists', function() {
+  timezone_mock.register();
+  // Any date in May should be in May and not in June
+  assert.equal(new Date(1588316400000).toDateString(), 'Fri May 01 2020');
+  // Any date after May should have the right month name
+  assert.equal(new Date(1598964466381).toDateString(), 'Tue Sept 01 2020');
+  timezone_mock.unregister();
+});
