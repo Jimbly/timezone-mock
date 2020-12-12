@@ -36,14 +36,14 @@ function MockDate(param) {
         this.d = new _Date();
         this.fromLocal(new _Date(param.replace(' ', 'T') + 'Z'));
       } else if (MockDateOptions.fallbackFn) {
-        this.d = MockDateOptions.fallbackFn(param)
+        this.d = MockDateOptions.fallbackFn(param);
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }
     } else if (typeof param === 'number' || param === null || param === undefined) {
       this.d = new _Date(param);
     } else if (MockDateOptions.fallbackFn) {
-      this.d = MockDateOptions.fallbackFn(param)
+      this.d = MockDateOptions.fallbackFn(param);
     } else {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
@@ -218,8 +218,8 @@ MockDate.prototype.toDateString = function () {
 // 'toLocaleTimeString',
 // 'toTimeString',
 
-function options(options) {
-  MockDateOptions = options || {}
+function options(opts) {
+  MockDateOptions = opts || {};
 }
 exports.options = options;
 

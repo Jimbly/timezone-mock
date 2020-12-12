@@ -111,23 +111,23 @@ test('Make sure month May exists', function() {
 //////////////////////////////////////////////////////////////////////////
 test('option to use a fallback function when failing to parse (issue #24)', function() {
   timezone_mock.unregister();
-  var _Date = Date
+  var _Date = Date;
   timezone_mock.options({
     fallbackFn: (date) => new _Date(date)
-  })
+  });
   timezone_mock.register('UTC');
   assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
   timezone_mock.unregister();
 
   // How can we reset options?
-  timezone_mock.options()
+  timezone_mock.options();
   timezone_mock.register('UTC');
   try {
     assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
-    assert.error('We shouldn\'t have made it here!')
-  }catch(err) {
+    assert.error('We shouldn\'t have made it here!');
+  } catch (err) {
     // Expected
-  }finally{
+  } finally {
     timezone_mock.unregister();
   }
 });
