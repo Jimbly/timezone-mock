@@ -5,7 +5,7 @@ exports.tzdata = tzdata;
 var _Date = Date;
 exports._Date = _Date;
 
-var MockDateOptions = {};
+var mockDateOptions = {};
 
 var timezone;
 
@@ -35,15 +35,15 @@ function MockDate(param) {
       } else if (param.match(local_date_regex)) {
         this.d = new _Date();
         this.fromLocal(new _Date(param.replace(' ', 'T') + 'Z'));
-      } else if (MockDateOptions.fallbackFn) {
-        this.d = MockDateOptions.fallbackFn(param);
+      } else if (mockDateOptions.fallbackFn) {
+        this.d = mockDateOptions.fallbackFn(param);
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }
     } else if (typeof param === 'number' || param === null || param === undefined) {
       this.d = new _Date(param);
-    } else if (MockDateOptions.fallbackFn) {
-      this.d = MockDateOptions.fallbackFn(param);
+    } else if (mockDateOptions.fallbackFn) {
+      this.d = mockDateOptions.fallbackFn(param);
     } else {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
@@ -219,7 +219,7 @@ MockDate.prototype.toDateString = function () {
 // 'toTimeString',
 
 function options(opts) {
-  MockDateOptions = opts || {};
+  mockDateOptions = opts || {};
 }
 exports.options = options;
 
