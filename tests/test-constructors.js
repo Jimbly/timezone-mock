@@ -122,12 +122,13 @@ test('option to use a fallback function when failing to parse (issue #24)', func
   // How can we reset options?
   timezone_mock.options();
   timezone_mock.register('UTC');
+  var got_error = false;
   try {
     assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
-    assert.error('We shouldn\'t have made it here!');
   } catch (err) {
     // Expected
-  } finally {
-    timezone_mock.unregister();
+    got_error = true;
   }
+  assert.equal(got_error, true);
+  timezone_mock.unregister();
 });
