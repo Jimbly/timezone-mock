@@ -5,6 +5,8 @@ exports.tzdata = tzdata;
 var _Date = Date;
 exports._Date = _Date;
 
+var mockDateOptions = {};
+
 var timezone;
 
 var weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -33,11 +35,15 @@ function MockDate(param) {
       } else if (param.match(local_date_regex)) {
         this.d = new _Date();
         this.fromLocal(new _Date(param.replace(' ', 'T') + 'Z'));
+      } else if (mockDateOptions.fallbackFn) {
+        this.d = mockDateOptions.fallbackFn(param);
       } else {
         assert.ok(false, 'Unhandled date format passed to MockDate constructor: ' + param);
       }
     } else if (typeof param === 'number' || param === null || param === undefined) {
       this.d = new _Date(param);
+    } else if (mockDateOptions.fallbackFn) {
+      this.d = mockDateOptions.fallbackFn(param);
     } else {
       assert.ok(false, 'Unhandled type passed to MockDate constructor: ' + typeof param);
     }
@@ -211,6 +217,11 @@ MockDate.prototype.toDateString = function () {
 // 'toLocaleDateString',
 // 'toLocaleTimeString',
 // 'toTimeString',
+
+function options(opts) {
+  mockDateOptions = opts || {};
+}
+exports.options = options;
 
 function register(new_timezone, glob) {
   if (!glob) {

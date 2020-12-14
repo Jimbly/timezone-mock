@@ -107,3 +107,28 @@ test('Make sure month May exists', function() {
   assert.equal(new Date(1598964466381).toDateString(), 'Tue Sept 01 2020');
   timezone_mock.unregister();
 });
+
+//////////////////////////////////////////////////////////////////////////
+test('option to use a fallback function when failing to parse (issue #24)', function() {
+  timezone_mock.unregister();
+  var _Date = Date;
+  timezone_mock.options({
+    fallbackFn: (date) => new _Date(date)
+  });
+  timezone_mock.register('UTC');
+  assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
+  timezone_mock.unregister();
+
+  // How can we reset options?
+  timezone_mock.options();
+  timezone_mock.register('UTC');
+  var got_error = false;
+  try {
+    assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
+  } catch (err) {
+    // Expected
+    got_error = true;
+  }
+  assert.equal(got_error, true);
+  timezone_mock.unregister();
+});
