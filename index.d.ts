@@ -1,5 +1,5 @@
 interface Options {
-  fallbackFn: (date: any) => typeof Date;
+  fallbackFn: (date: any) => Date;
 }
 
 interface DateHoldingGlobal {
