@@ -223,6 +223,16 @@ function options(opts) {
 }
 exports.options = options;
 
+var orig_object_toString;
+function mockDateObjectToString() {
+  if (this instanceof MockDate) {
+    // Look just like a regular Date to anything doing very low-level Object.prototype.toString calls
+    // See: https://github.com/Jimbly/timezone-mock/issues/48
+    return '[object Date]';
+  }
+  return orig_object_toString.call(this);
+}
+
 function register(new_timezone, glob) {
   if (!glob) {
     if (typeof window !== 'undefined') {
@@ -233,6 +243,10 @@ function register(new_timezone, glob) {
   }
   timezone = new_timezone || 'US/Pacific';
   glob.Date = MockDate;
+  if (!orig_object_toString) {
+    orig_object_toString = Object.prototype.toString;
+    Object.prototype.toString = mockDateObjectToString;
+  }
 }
 exports.register = register;
 
