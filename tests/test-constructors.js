@@ -22,6 +22,7 @@ test('"simple" date constructors', function() {
   assert.ok(Number.isNaN(new Date('').getHours()));
   assert.equal(new Date(1627943659743).toString(), '2021-08-02T22:34:19.743Z UTC (MockDate: GMT-0700)');
   assert.equal(Object.prototype.toString.call(new Date(1627943659743)), '[object Date]');
+  assert.equal(Object.prototype.toString.call(undefined), '[object Undefined]');
 
   var invalidDateMadeValid = new Date('');
   assert.ok(invalidDateMadeValid.setTime(12345) === 12345);
