@@ -214,9 +214,25 @@ MockDate.prototype.toDateString = function () {
     this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
 };
 
+MockDate.prototype.toLocaleDateString = function (locales, options = {}) {
+  const time = this.d.getTime();
+  if (Number.isNaN(time)) {
+    return new _Date('').toDateString();
+  }
+  options.timeZone = timezone;
+  return new _Date(time).toLocaleDateString(locales, options);
+};
+
+MockDate.prototype.toLocaleTimeString = function (locales, options = {}) {
+  const time = this.d.getTime();
+  if (Number.isNaN(time)) {
+    return new _Date('').toDateString();
+  }
+  options.timeZone = timezone;
+  return new _Date(time).toLocaleTimeString(locales, options);
+};
+
 // TODO:
-// 'toLocaleDateString',
-// 'toLocaleTimeString',
 // 'toTimeString',
 
 function options(opts) {

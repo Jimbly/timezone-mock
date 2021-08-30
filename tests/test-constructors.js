@@ -135,3 +135,32 @@ test('option to use a fallback function when failing to parse (issue #24)', func
   assert.equal(got_error, true);
   timezone_mock.unregister();
 });
+
+//////////////////////////////////////////////////////////////////////////
+test('toLocaleDateString() works', function() {
+  const options = {
+    year: 'numeric', month: 'short', day: 'numeric'
+  };
+  timezone_mock.register('UTC');
+  assert.equal('May 26, 2017', new Date('2017-05-26T17:52:35.869Z').toLocaleDateString('en-US', options));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal('May 26, 2017', new Date('2017-05-26T17:52:35.869Z').toLocaleDateString('en-US', options));
+  timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  assert.equal('May 27, 2017', new Date('2017-05-26T17:52:35.869Z').toLocaleDateString('en-US', options));
+  timezone_mock.unregister();
+});
+
+//////////////////////////////////////////////////////////////////////////
+test('toLocaleTimeString() works', function() {
+  timezone_mock.register('UTC');
+  assert.equal('5:52:35 PM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal('10:52:35 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  assert.equal('3:22:35 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+});
