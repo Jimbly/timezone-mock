@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 var assert = require('assert');
 var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
@@ -214,8 +215,9 @@ MockDate.prototype.toDateString = function () {
     this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
 };
 
-MockDate.prototype.toLocaleDateString = function (locales, options = {}) {
-  const time = this.d.getTime();
+MockDate.prototype.toLocaleDateString = function (locales, options) {
+  options = options || {};
+  var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
@@ -223,8 +225,9 @@ MockDate.prototype.toLocaleDateString = function (locales, options = {}) {
   return new _Date(time).toLocaleDateString(locales, options);
 };
 
-MockDate.prototype.toLocaleTimeString = function (locales, options = {}) {
-  const time = this.d.getTime();
+MockDate.prototype.toLocaleTimeString = function (locales, options) {
+  options = options || {};
+  var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
