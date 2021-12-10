@@ -76,8 +76,14 @@ has a large positive and non-integral offset (+9.5/+10.5).
 Status
 ======
 
+The behavior of `toLocaleString()` has changed in v1.3.0 to more closely match Node's
+behavior, but only works on Node v14+.  Use v1.2.2 for the old behavior.  See note below.
+
 Most Date member functions are supported except for some conversions to
-locale-specific date strings.
+locale-specific date strings.  These are mocked in a way that may only work
+reliably on Node v14+.  Note that using locale-specific formatting is often
+device- and browser-dependant, so any use of these in tests may indicate a
+potential bug.
 
 With non-DST timezones, it should behave identically to the native Javascript
 Date object.  With DST timezones, it may sometimes behave slightly differently
