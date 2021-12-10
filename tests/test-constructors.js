@@ -137,6 +137,22 @@ test('option to use a fallback function when failing to parse (issue #24)', func
 });
 
 //////////////////////////////////////////////////////////////////////////
+test('toLocaleString() works', function() {
+  const options = {
+    year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
+  };
+  timezone_mock.register('UTC');
+  assert.equal('May 26, 2017, 5:52 PM', new Date('2017-05-26T17:52:35.869Z').toLocaleString('en-US', options));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal('May 26, 2017, 10:52 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleString('en-US', options));
+  timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  assert.equal('May 27, 2017, 3:22 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleString('en-US', options));
+  timezone_mock.unregister();
+});
+
+//////////////////////////////////////////////////////////////////////////
 test('toLocaleDateString() works', function() {
   const options = {
     year: 'numeric', month: 'short', day: 'numeric'
