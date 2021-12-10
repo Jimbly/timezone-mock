@@ -176,7 +176,7 @@ MockDate.prototype.getTimezoneOffset = function () {
   return this.calcTZO() * 60;
 };
 
-MockDate.prototype.toString = MockDate.prototype.toLocaleString = function () {
+MockDate.prototype.toString = function () {
   if (this instanceof _Date) {
     // someone, like util.inspect, calling Date.prototype.toString.call(foo)
     return _Date.prototype.toString.call(this);
@@ -213,6 +213,16 @@ MockDate.prototype.toDateString = function () {
   }
   return weekDays[this.getDay()] + ' ' + months[this.getMonth()] + ' ' +
     this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
+};
+
+MockDate.prototype.toLocaleString = function (locales, options) {
+  options = options || {};
+  var time = this.d.getTime();
+  if (Number.isNaN(time)) {
+    return new _Date('').toDateString();
+  }
+  options.timeZone = timezone;
+  return new _Date(time).toLocaleString(locales, options);
 };
 
 MockDate.prototype.toLocaleDateString = function (locales, options) {
