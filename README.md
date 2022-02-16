@@ -64,7 +64,7 @@ Currently supported timezones are:
 * Europe/London
 * Australia/Adelaide
 
-I found that testing on these three were enough to ensure code worked in
+I found that testing on these were enough to ensure code worked in
 all timezones (important factor is to test on a timezone with Daylight Saving
 Time if your local timezone does not).  Brazil/East has the unique characteristic
 of having the DST transition happen right at midnight, so code that sets a Date
@@ -72,6 +72,43 @@ object to midnight on a particular day and then does operations on that Date
 object is especially vulnerable in that timezone.  Europe/London is included as
 a timezone that is a positive offset from UTC, and Australia/Adelaide as one that
 has a large positive and non-integral offset (+9.5/+10.5).
+
+Supported GMT Offsets
+=====================
+Currently supported GMT offsets are:
+* Etc/GMT+12
+* Etc/GMT+11
+* Etc/GMT+10
+* Etc/GMT+9
+* Etc/GMT+8
+* Etc/GMT+7
+* Etc/GMT+6
+* Etc/GMT+5
+* Etc/GMT+4
+* Etc/GMT+3
+* Etc/GMT+2
+* Etc/GMT+1
+* Etc/GMT+0
+* Etc/GMT
+* Etc/GMT-0
+* Etc/GMT-1
+* Etc/GMT-2
+* Etc/GMT-3
+* Etc/GMT-4
+* Etc/GMT-5
+* Etc/GMT-6
+* Etc/GMT-7
+* Etc/GMT-8
+* Etc/GMT-9
+* Etc/GMT-10
+* Etc/GMT-11
+* Etc/GMT-12
+* Etc/GMT-13
+* Etc/GMT-14
+
+GMT offsets can be used to test if UTC times fall on particular local calendar days.
+Note: `Etc/GMT+0`, `Etc/GMT`, and `Etc/GMT-0` all represent the same offset and are
+equivalent to the `UTC` time zone.
 
 Status
 ======

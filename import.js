@@ -81,6 +81,12 @@ for (let ii = 0; ii < tzh_ttisgmtcnt; ++ii) {
 let cuttoff = new Date('2038').getTime() / 1000; // Things get weird after this in the Linux data, ignore it
 transitions = transitions.filter((trans) => trans.time < cuttoff);
 
+// add transitions for the first and last timestamps if the time zone doesn't have DST transitions
+if (!transitions.length) {
+  transitions.push({ time: 0, which: 0 });
+  transitions.push({ time: Infinity, which: 0 });
+}
+
 let named = {};
 let out = {
   names: [],
@@ -96,13 +102,16 @@ for (let ii = 0; ii < transitions.length; ++ii) {
     named[offs] = true;
   }
 }
+
 if (out.transitions[0]) {
   // Assume alternating and start at the other
   out.transitions.splice(0, 0, 0, out.transitions[3]);
 }
 
+const zoneName = process.argv[2].split('zoneinfo/')[1];
 // console.log(out);
-console.log('  {');
+console.log('');
+console.log(`  '${zoneName}': {`);
 console.log(`    names: [${out.names.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')}],`);
 console.log('    transitions: [');
 for (let ii = 0; ii < out.transitions.length; ii += 2) {
