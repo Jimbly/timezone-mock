@@ -216,32 +216,29 @@ MockDate.prototype.toDateString = function () {
 };
 
 MockDate.prototype.toLocaleString = function (locales, options) {
-  options = options || {};
+  options = Object.assign({ timeZone: timezone }, options);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  options.timeZone = timezone;
   return new _Date(time).toLocaleString(locales, options);
 };
 
 MockDate.prototype.toLocaleDateString = function (locales, options) {
-  options = options || {};
+  options = Object.assign({ timeZone: timezone }, options);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  options.timeZone = timezone;
   return new _Date(time).toLocaleDateString(locales, options);
 };
 
 MockDate.prototype.toLocaleTimeString = function (locales, options) {
-  options = options || {};
+  options = Object.assign({ timeZone: timezone }, options);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  options.timeZone = timezone;
   return new _Date(time).toLocaleTimeString(locales, options);
 };
 

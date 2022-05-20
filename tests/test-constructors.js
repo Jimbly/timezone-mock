@@ -150,6 +150,12 @@ test('toLocaleString() works', function() {
   timezone_mock.register('Australia/Adelaide');
   assert.equal('May 27, 2017, 3:22 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleString('en-US', options));
   timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  const optionsWithTz = {
+    year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: 'UTC'
+  };
+  assert.equal('May 26, 2017, 5:52 PM', new Date('2017-05-26T17:52:35.869Z').toLocaleString('en-US', optionsWithTz));
+  timezone_mock.unregister();
 });
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,6 +172,12 @@ test('toLocaleDateString() works', function() {
   timezone_mock.register('Australia/Adelaide');
   assert.equal('May 27, 2017', new Date('2017-05-26T17:52:35.869Z').toLocaleDateString('en-US', options));
   timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  const optionsWithTz = {
+    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'
+  };
+  assert.equal('May 26, 2017', new Date('2017-05-26T17:52:35.869Z').toLocaleDateString('en-US', optionsWithTz));
+  timezone_mock.unregister();
 });
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,5 +190,8 @@ test('toLocaleTimeString() works', function() {
   timezone_mock.unregister();
   timezone_mock.register('Australia/Adelaide');
   assert.equal('3:22:35 AM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('Australia/Adelaide');
+  assert.equal('5:52:35 PM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US', { timeZone: 'UTC' }));
   timezone_mock.unregister();
 });
