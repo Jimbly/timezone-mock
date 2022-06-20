@@ -46,4 +46,6 @@ export type TimeZone =
 export function options(options: Options): void;
 export function register(zone: TimeZone, glob?: DateHoldingGlobal): void;
 export function unregister(glob?: DateHoldingGlobal): void;
+export function setCurrentTime(currentTime: number): void;
+export function resetCurrentTime(): void;
 export const _Date: typeof Date;

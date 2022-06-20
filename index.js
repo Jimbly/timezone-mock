@@ -21,9 +21,15 @@ var date_with_offset = /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(\.\d\d\d)? (Z|(-|\+|)
 var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
 
+var currentTime = null;
+
 function MockDate(param) {
   if (arguments.length === 0) {
-    this.d = new _Date();
+    if (typeof currentTime === 'number') {
+        this.d = new _Date(currentTime);
+    } else {
+        this.d = new _Date();
+    }
   } else if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
@@ -203,7 +209,7 @@ MockDate.prototype.toString = function () {
   return str.join('');
 };
 
-MockDate.now = _Date.now;
+MockDate.now = () => new MockDate().getTime();
 
 MockDate.UTC = _Date.UTC;
 
@@ -288,3 +294,14 @@ function unregister(glob) {
   glob.Date = _Date;
 }
 exports.unregister = unregister;
+
+
+function setCurrentTime(timeToSet) {
+	currentTime = timeToSet;
+}
+exports.setCurrentTime = setCurrentTime;
+
+function resetCurrentTime() {
+	currentTime = null;
+}
+exports.resetCurrentTime = resetCurrentTime;
