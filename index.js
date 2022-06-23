@@ -203,9 +203,9 @@ MockDate.prototype.toString = function () {
   return str.join('');
 };
 
-MockDate.now = () => _Date.now;
+MockDate.now = function () { return _Date.now() };
 
-MockDate.UTC = () => _Date.UTC;
+MockDate.UTC = function () { return _Date.UTC.apply(_Date, arguments) };
 
 MockDate.prototype.toDateString = function () {
   if (Number.isNaN(this.d.getTime())) {
@@ -292,14 +292,3 @@ function unregister(glob) {
   glob.Date = _Date;
 }
 exports.unregister = unregister;
-
-
-function setCurrentTime(timeToSet) {
-	currentTime = timeToSet;
-}
-exports.setCurrentTime = setCurrentTime;
-
-function resetCurrentTime() {
-	currentTime = null;
-}
-exports.resetCurrentTime = resetCurrentTime;
