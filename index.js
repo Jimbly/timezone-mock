@@ -4,8 +4,8 @@ var assert = require('assert');
 var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
 
-var _Date = Date;
-exports._Date = _Date;
+var _Date = null;
+exports._Date = null;
 
 var mockDateOptions = {};
 
@@ -203,9 +203,9 @@ MockDate.prototype.toString = function () {
   return str.join('');
 };
 
-MockDate.now = _Date.now;
+MockDate.now = function () { return _Date.now() };
 
-MockDate.UTC = _Date.UTC;
+MockDate.UTC = function () { return _Date.UTC.apply(_Date, arguments) };
 
 MockDate.prototype.toDateString = function () {
   if (Number.isNaN(this.d.getTime())) {
@@ -269,6 +269,10 @@ function register(new_timezone, glob) {
     }
   }
   timezone = new_timezone || 'US/Pacific';
+  if (glob.Date !== MockDate) {
+    _Date = glob.Date;
+    exports._Date = glob.Date;
+  }
   glob.Date = MockDate;
   if (!orig_object_toString) {
     orig_object_toString = Object.prototype.toString;

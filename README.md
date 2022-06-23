@@ -51,7 +51,8 @@ API
 * `timezone_mock.register(timezone)` - Replace the global Date object with a mocked one for
 the specified timezone.  Defaults to 'US/Pacific' if no timezone is specified.
 * `timezone_mock.unregister()` - Return to normal Date object behavior
-* `timezone_mock._Date` - access to the original Date object for testing
+* `timezone_mock._Date` - access to the original Date object for testing. Available after `register` is called, and it's the Date
+object of the provided global/window context.
 * `timezone_mock.options({ fallbackFn })` - Option to provide a fallback function when `timezone-mock` fails to parse.
 
 Supported Timezones
