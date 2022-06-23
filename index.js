@@ -4,8 +4,8 @@ var assert = require('assert');
 var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
 
-var _Date = Date;
-exports._Date = _Date;
+var _Date = null;
+exports._Date = null;
 
 var mockDateOptions = {};
 
@@ -21,15 +21,9 @@ var date_with_offset = /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(\.\d\d\d)? (Z|(-|\+|)
 var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
 
-var currentTime = null;
-
 function MockDate(param) {
   if (arguments.length === 0) {
-    if (typeof currentTime === 'number') {
-        this.d = new _Date(currentTime);
-    } else {
-        this.d = new _Date();
-    }
+    this.d = new _Date();
   } else if (arguments.length === 1) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
@@ -209,9 +203,9 @@ MockDate.prototype.toString = function () {
   return str.join('');
 };
 
-MockDate.now = () => new MockDate().getTime();
+MockDate.now = () => _Date.now;
 
-MockDate.UTC = _Date.UTC;
+MockDate.UTC = () => _Date.UTC;
 
 MockDate.prototype.toDateString = function () {
   if (Number.isNaN(this.d.getTime())) {
@@ -275,6 +269,10 @@ function register(new_timezone, glob) {
     }
   }
   timezone = new_timezone || 'US/Pacific';
+  if (glob.Date !== MockDate) {
+    _Date = glob.Date;
+    exports._Date = glob.Date;
+  }
   glob.Date = MockDate;
   if (!orig_object_toString) {
     orig_object_toString = Object.prototype.toString;
