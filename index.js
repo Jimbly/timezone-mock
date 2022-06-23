@@ -5,7 +5,7 @@ var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
 
 var _Date = null;
-exports._Date = null;
+exports._Date = Date;
 
 var mockDateOptions = {};
 
