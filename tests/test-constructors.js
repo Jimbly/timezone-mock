@@ -4,16 +4,32 @@
 var assert = require('assert');
 var timezone_mock = require('..');
 
-timezone_mock.register();
-
 var test = global.test || ((name, tst) => {
   console.log('TEST:', name, '...');
   tst();
   console.log('      PASSED!');
 });
 
+function isMockDate(d) {
+  return typeof d.fromLocal === 'function';
+}
+
+//////////////////////////////////////////////////////////////////////////
+// This test must be first
+test('unregister without register', function() {
+  assert.ok(!isMockDate(new Date()));
+  timezone_mock.unregister();
+  assert.ok(!isMockDate(new Date()));
+  timezone_mock.register();
+  assert.ok(isMockDate(new Date()));
+  timezone_mock.unregister();
+  assert.ok(!isMockDate(new Date()));
+});
+
+
 //////////////////////////////////////////////////////////////////////////
 test('"simple" date constructors', function() {
+  timezone_mock.register();
   assert.ok(new Date());
   assert.ok(new Date(null));
 
@@ -194,4 +210,33 @@ test('toLocaleTimeString() works', function() {
   timezone_mock.register('Australia/Adelaide');
   assert.equal('5:52:35 PM', new Date('2017-05-26T17:52:35.869Z').toLocaleTimeString('en-US', { timeZone: 'UTC' }));
   timezone_mock.unregister();
+});
+
+//////////////////////////////////////////////////////////////////////////
+test('chained mocking', function() {
+  timezone_mock.unregister();
+  // Make a mock'd date that changes Date.now()
+  let RealDate = Date;
+  assert.ok(!isMockDate(new RealDate()));
+  function MyDate() {
+    RealDate.apply(this, arguments);
+  }
+  MyDate.prototype = Object.create(RealDate.prototype);
+  for (var key in Date) {
+    MyDate[key] = Date[key];
+  }
+  MyDate.now = function () {
+    return 1234;
+  };
+  global.Date = MyDate;
+  // Register timezone_mock on top of it
+  timezone_mock.register();
+  // We should get a mocked date using our mocked now function
+  assert.ok(isMockDate(new Date()));
+  assert.equal(Date.now(), 1234);
+  // Unregister timezone_mock and our test mock
+  timezone_mock.unregister();
+  assert.ok(!isMockDate(new Date()));
+  assert.equal(global.Date, MyDate);
+  global.Date = RealDate;
 });

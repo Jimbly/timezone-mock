@@ -289,6 +289,9 @@ function unregister(glob) {
       glob = global;
     }
   }
-  glob.Date = _Date;
+  if (glob.Date === MockDate) {
+    assert(_Date);
+    glob.Date = _Date;
+  }
 }
 exports.unregister = unregister;
