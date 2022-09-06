@@ -76,6 +76,8 @@ has a large positive and non-integral offset (+9.5/+10.5).
 
 Supported GMT Offsets
 =====================
+Note: the `Etc/GMT` timezones work the opposite of how one might expect, the `Etc/GMT+5` timezone is equivalent to US Eastern Standard Time (UTC-5).
+
 Currently supported GMT offsets are:
 * Etc/GMT+12
 * Etc/GMT+11
