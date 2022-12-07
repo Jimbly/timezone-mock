@@ -101,6 +101,17 @@ test('constructor supports time format YYYY-MM-DDZ', function() {
   timezone_mock.unregister();
 });
 
+/////////////////////////////////
+test('constructor supports time format Fri, 27 Jul 2019 10:32:24 GMT', function() {
+  timezone_mock.register('UTC');
+  assert.equal(new Date('Fri, 27 Jul 2019 10:32:24 GMT').toLocaleString('en-US'), '7/27/2019, 10:32:24 AM');
+  assert.throws(() => new Date('Fre, 27 Jul 2019 10:32:24 GMT').toLocaleString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal(new Date('Fri, 27 Jul 2019 10:32:24 GMT').toLocaleString('en-US'), '7/27/2019, 3:32:24 AM');
+  timezone_mock.unregister();
+});
+
 //////////////////////////////////////////////////////////////////////////
 test('UTC/non-local timezone constructors', function() {
   assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
