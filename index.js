@@ -20,6 +20,7 @@ var date_iso_8601_regex = /^\d\d\d\d(-\d\d(-\d\d(T\d\d:\d\d:\d\d(\.\d\d\d)?(\d\d
 var date_with_offset = /^\d\d\d\d-\d\d-\d\d( \d\d:\d\d:\d\d(\.\d\d\d)? )?(Z|(-|\+|)\d\d:\d\d)$/;
 var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
+var local_GMT_regex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d GMT$/
 
 function MockDate(param) {
   if (arguments.length === 0) {
@@ -31,6 +32,7 @@ function MockDate(param) {
       if (param.match(date_iso_8601_regex) ||
         param.match(date_with_offset) ||
         param.match(date_rfc_2822_regex) ||
+        param.match(local_GMT_regex) ||
         param === ''
       ) {
         this.d = new _Date(param);
