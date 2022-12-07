@@ -88,6 +88,19 @@ test('date constructors as used by local timezone mode in node-mysql (local stri
   assert.equal(1414915200000, new Date('2014-11-02T01:00').getTime());
 });
 
+/////////////////////////////////
+test('constructor supports time format YYYY-MM-DDZ', function() {
+  timezone_mock.register('UTC');
+  assert.equal(new Date('2017-05-26Z').toLocaleTimeString('en-US'), '12:00:00 AM');
+  assert.equal(new Date('2017-05-26Z').toLocaleDateString('en-US'), '5/26/2017');
+  assert.throws(() => new Date('2017-05-26X').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal(new Date('2017-05-26Z').toLocaleTimeString('en-US'), '5:00:00 PM');
+  assert.equal(new Date('2017-05-26Z').toLocaleDateString('en-US'), '5/25/2017');
+  timezone_mock.unregister();
+});
+
 //////////////////////////////////////////////////////////////////////////
 test('UTC/non-local timezone constructors', function() {
   assert.equal(1495821155869, new Date('2017-05-26T17:52:35.869Z').getTime());
@@ -135,7 +148,7 @@ test('option to use a fallback function when failing to parse (issue #24)', func
     fallbackFn: (date) => new _Date(date)
   });
   timezone_mock.register('UTC');
-  assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
+  assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT-1').toDateString(), 'Fri Jul 26 2019');
   timezone_mock.unregister();
 
   // How can we reset options?
@@ -143,7 +156,7 @@ test('option to use a fallback function when failing to parse (issue #24)', func
   timezone_mock.register('UTC');
   var got_error = false;
   try {
-    assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
+    assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT-1').toDateString(), 'Fri Jul 26 2019');
   } catch (err) {
     // Expected
     got_error = true;
