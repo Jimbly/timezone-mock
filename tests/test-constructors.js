@@ -4,11 +4,11 @@
 var assert = require('assert');
 var timezone_mock = require('..');
 
-var test = global.test || ((name, tst) => {
+var test = global.test || function (name, tst) {
   console.log('TEST:', name, '...');
   tst();
   console.log('      PASSED!');
-});
+};
 
 function isMockDate(d) {
   return typeof d.fromLocal === 'function';
@@ -132,7 +132,9 @@ test('option to use a fallback function when failing to parse (issue #24)', func
   timezone_mock.unregister();
   var _Date = Date;
   timezone_mock.options({
-    fallbackFn: (date) => new _Date(date)
+    fallbackFn: function (date) {
+      return new _Date(date);
+    }
   });
   timezone_mock.register('UTC');
   assert.equal(new Date('Fri, 26 Jul 2019 10:32:24 GMT').toDateString(), 'Fri Jul 26 2019');
@@ -216,7 +218,7 @@ test('toLocaleTimeString() works', function() {
 test('chained mocking', function() {
   timezone_mock.unregister();
   // Make a mock'd date that changes Date.now()
-  let RealDate = Date;
+  var RealDate = Date;
   assert.ok(!isMockDate(new RealDate()));
   function MyDate() {
     RealDate.apply(this, arguments);
