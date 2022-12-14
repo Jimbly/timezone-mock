@@ -102,6 +102,19 @@ test('constructor supports time format YYYY-MM-DDZ', function() {
 });
 
 /////////////////////////////////
+test('constructor supports time format YYYY-MM-DDThh:mmZ', function() {
+  timezone_mock.register('UTC');
+  assert.equal(new Date('2017-05-26T00:00Z').toLocaleTimeString('en-US'), '12:00:00 AM');
+  assert.equal(new Date('2017-05-26T00:00Z').toLocaleDateString('en-US'), '5/26/2017');
+  assert.throws(() => new Date('2017-05-26T00:00:Z').toLocaleTimeString('en-US'));
+  timezone_mock.unregister();
+  timezone_mock.register('US/Pacific');
+  assert.equal(new Date('2017-05-26T00:00Z').toLocaleTimeString('en-US'), '5:00:00 PM');
+  assert.equal(new Date('2017-05-26T00:00Z').toLocaleDateString('en-US'), '5/25/2017');
+  timezone_mock.unregister();
+});
+
+/////////////////////////////////
 test('constructor supports time format Fri, 27 Jul 2019 10:32:24 GMT', function() {
   timezone_mock.register('UTC');
   assert.equal(new Date('Fri, 27 Jul 2019 10:32:24 GMT').toLocaleString('en-US'), '7/27/2019, 10:32:24 AM');
