@@ -1,6 +1,13 @@
 'use strict';
 
-var assert = require('assert');
+var assert = {
+  ok(cond, msg) {
+    if (!cond) {
+      throw new Error(msg);
+    }
+  }
+};
+
 var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
 
@@ -85,7 +92,7 @@ function passthrough(fn) {
       // there should be no _Date objects in user code when using MockDate.
       real_date = this;
     } else {
-      assert(false, 'Unexpected object type');
+      assert.ok(false, 'Unexpected object type');
     }
     return real_date[fn].apply(real_date, arguments);
   };
@@ -292,7 +299,7 @@ function unregister(glob) {
     }
   }
   if (glob.Date === MockDate) {
-    assert(_Date);
+    assert.ok(_Date, 'need to pass a date');
     glob.Date = _Date;
   }
 }
