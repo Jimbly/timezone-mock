@@ -43,6 +43,24 @@ export type TimeZone =
   'Etc/GMT-13' |
   'Etc/GMT-14';
 
+export interface TzDef {
+  names: (number | string)[],
+
+  /**
+   * List of UTC offset changes
+   *
+   * Always has even length. Each pair of numbers refers first to a unix
+   * time at which the time zone's UTC offset changes (for example, to
+   * account for Daylight Saving Time).
+   *
+   * Transitions are defined for all of 32-bit Unix time (1970-01-01
+   * through 2038-01-19T03:14:07 UTC); outside of that range, offsets
+   * will not be accurate.
+   * */
+  transitions: number[],
+}
+
+export const tzdata: Record<TimeZone, TzDef>;
 export function options(options: Options): void;
 export function register(zone: TimeZone, glob?: DateHoldingGlobal): void;
 export function unregister(glob?: DateHoldingGlobal): void;
