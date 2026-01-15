@@ -70,7 +70,9 @@ all timezones (important factor is to test on a timezone with Daylight Saving
 Time if your local timezone does not).  Brazil/East has the unique characteristic
 of having the DST transition happen right at midnight, so code that sets a Date
 object to midnight on a particular day and then does operations on that Date
-object is especially vulnerable in that timezone.  Europe/London is included as
+object is especially vulnerable in that timezone _(2019 note: Brazil/East,
+however, no longer does Daylight Saving Time, so this is only true for dates
+representing 2018 or earlier)_.  Europe/London is included as
 a timezone that is a positive offset from UTC, and Australia/Adelaide as one that
 has a large positive and non-integral offset (+9.5/+10.5).
 
