@@ -110,6 +110,10 @@ if (out.transitions[0]) {
   // Assume alternating and start at the other
   out.transitions.splice(0, 0, 0, out.transitions[3]);
 }
+if (out.transitions[out.transitions.length - 2] < 2120000000) {
+  // not near the end of the Unix epoch, e.g. Brazil/East abolished DST in 2019
+  out.transitions.push(Infinity, out.transitions[out.transitions.length - 1]);
+}
 
 const zoneName = process.argv[2].split('zoneinfo/')[1]
   .replace('PST8PDT', 'US/Pacific')
