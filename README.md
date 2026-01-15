@@ -16,10 +16,7 @@ sure to always test using specific dates in the past. The timezone data used by
 00:00:00 UTC through the end of 2025. Assuming no DST policy changes, the data
 includes future timezone data through the end of 32-bit Unix time
 (2038-01-19T03:14:07 UTC), and dates in the (non-DST) UTC/GMT timezones should
-be accurate indefinitely. Assuming no DST policy changes, the data includes
-future timezone data through the end of 32-bit Unix time (2038-01-19T03:14:07
-UTC), and dates in the (non-DST) UTC/GMT timezones should be accurate
-indefinitely.
+be accurate indefinitely.
 
 Note: Node v8.0.0 changed how the string "YYYY-MM-DDTHH:MM:SS" is interpreted.
 It was previously interpreted as a UTC date, but now is a local date. If your
