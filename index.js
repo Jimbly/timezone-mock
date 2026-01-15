@@ -20,7 +20,7 @@ var date_iso_8601_regex = /^\d\d\d\d(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d\d\d)?(\
 var date_with_offset = /^\d\d\d\d-\d\d-\d\d( \d\d:\d\d:\d\d(\.\d\d\d)? )?(Z|(-|\+|)\d\d:\d\d)$/;
 var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
 var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
-var local_GMT_regex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d GMT$/
+var local_GMT_regex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d GMT$/;
 
 function MockDate(param) {
   if (arguments.length === 0) {
@@ -205,9 +205,13 @@ MockDate.prototype.toString = function () {
   return str.join('');
 };
 
-MockDate.now = function () { return _Date.now() };
+MockDate.now = function () {
+  return _Date.now();
+};
 
-MockDate.UTC = function () { return _Date.UTC.apply(_Date, arguments) };
+MockDate.UTC = function () {
+  return _Date.UTC.apply(_Date, arguments);
+};
 
 MockDate.prototype.toDateString = function () {
   if (Number.isNaN(this.d.getTime())) {
@@ -217,31 +221,31 @@ MockDate.prototype.toDateString = function () {
     this.getDate().toString().padStart(2, '0') + ' ' + this.getFullYear();
 };
 
-MockDate.prototype.toLocaleString = function (locales, options) {
-  options = Object.assign({ timeZone: timezone }, options);
+MockDate.prototype.toLocaleString = function (locales, opts) {
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  return new _Date(time).toLocaleString(locales, options);
+  return new _Date(time).toLocaleString(locales, opts);
 };
 
-MockDate.prototype.toLocaleDateString = function (locales, options) {
-  options = Object.assign({ timeZone: timezone }, options);
+MockDate.prototype.toLocaleDateString = function (locales, opts) {
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  return new _Date(time).toLocaleDateString(locales, options);
+  return new _Date(time).toLocaleDateString(locales, opts);
 };
 
-MockDate.prototype.toLocaleTimeString = function (locales, options) {
-  options = Object.assign({ timeZone: timezone }, options);
+MockDate.prototype.toLocaleTimeString = function (locales, opts) {
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
   }
-  return new _Date(time).toLocaleTimeString(locales, options);
+  return new _Date(time).toLocaleTimeString(locales, opts);
 };
 
 // TODO:
