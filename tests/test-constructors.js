@@ -152,6 +152,11 @@ test('Brazil timezone oddities', function() {
   timezone_mock.register('Brazil/East');
   assert.equal(1508032800000, new Date(test_str).getTime());
   assert.equal(1508032800000, new Date(2017, 9, 15, 0, 0, 0, 0).getTime());
+
+  // Some dates after DST was abolished
+  assert.equal(1577847600000, new Date('2020-01-01 00:00:00.000').getTime());
+  assert.equal(new Date('2026-01-15T16:29:00Z').toLocaleString('en-US'), '1/15/2026, 1:29:00 PM');
+  timezone_mock.unregister();
 });
 
 //////////////////////////////////////////////////////////////////////////
