@@ -12,10 +12,10 @@ a mocked Date object which behaves as if it is in the specified timezone.
 
 Note: Future timezone transitions are likely to change due to laws, etc.  Make
 sure to always test using specific dates in the past. The timezone data used by
-`timezone-mock 1.0.4+` should be up accurate for all times from the Unix
-epoch through the end of 2018. Timezone data is accurate for future
-times through the end of 32-bit Unix time (2038-01-19T03:14:07 UTC)
-absent future political events. 
+`timezone-mock 1.0.4+` should be up accurate for all times through the end of 2025.
+Assuming no DST policy changes, the data includes future timezone data through
+the end of 32-bit Unix time (2038-01-19T03:14:07 UTC), and dates in the
+(non-DST) UTC/GMT timezones should be accurate indefinitely.
 
 Note: Node v8.0.0 changed how the string "YYYY-MM-DDTHH:MM:SS" is interpreted.
 It was previously interpreted as a UTC date, but now is a local date. If your
@@ -73,7 +73,9 @@ all timezones (important factor is to test on a timezone with Daylight Saving
 Time if your local timezone does not).  Brazil/East has the unique characteristic
 of having the DST transition happen right at midnight, so code that sets a Date
 object to midnight on a particular day and then does operations on that Date
-object is especially vulnerable in that timezone.  Europe/London is included as
+object is especially vulnerable in that timezone _(2019 note: Brazil/East,
+however, no longer does Daylight Saving Time, so this is only true for dates
+representing 2018 or earlier)_.  Europe/London is included as
 a timezone that is a positive offset from UTC, and Australia/Adelaide as one that
 has a large positive and non-integral offset (+9.5/+10.5).
 

@@ -218,7 +218,7 @@
     "no-implied-eval": "error",
     "no-inline-comments": "off",
     "no-invalid-regexp": "error",
-    "no-invalid-this": "error",
+    "no-invalid-this": "off",
     "no-irregular-whitespace": "error",
     "no-iterator": "error",
     "no-label-var": "error",
