@@ -1,9 +1,12 @@
 /* eslint-env es6 */
-// Usage: Run and copy into tzdata.js
-// node import.js /usr/share/zoneinfo/SystemV/PST8PDT > out.txt
-// node import.js /usr/share/zoneinfo/SystemV/EST5EDT > out.txt
-// node import.js /usr/share/zoneinfo/America/Sao_Paulo > out.txt
-// node import.js /usr/share/zoneinfo/Australia/Adelaide > out.txt
+/*
+  Usage: Run and copy into tzdata.js
+    node import.js /usr/share/zoneinfo/Europe/London > out.txt
+    node import.js /usr/share/zoneinfo/PST8PDT >> out.txt
+    node import.js /usr/share/zoneinfo/EST5EDT >> out.txt
+    node import.js /usr/share/zoneinfo/America/Sao_Paulo >> out.txt
+    node import.js /usr/share/zoneinfo/Australia/Adelaide >> out.txt
+*/
 const assert = require('assert');
 const fs = require('fs');
 
@@ -108,9 +111,10 @@ if (out.transitions[0]) {
   out.transitions.splice(0, 0, 0, out.transitions[3]);
 }
 
-const zoneName = process.argv[2].split('zoneinfo/')[1];
-// console.log(out);
-console.log('');
+const zoneName = process.argv[2].split('zoneinfo/')[1]
+  .replace('PST8PDT', 'US/Pacific')
+  .replace('EST5EDT', 'US/Eastern')
+  .replace('America/Sao_Paulo', 'Brazil/East');
 console.log(`  '${zoneName}': {`);
 console.log(`    names: [${out.names.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')}],`);
 console.log('    transitions: [');
