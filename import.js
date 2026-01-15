@@ -83,7 +83,7 @@ transitions = transitions.filter((trans) => trans.time < cuttoff);
 
 // add transitions for the first and last timestamps if the time zone doesn't have DST transitions
 if (!transitions.length) {
-  transitions.push({ time: 0, which: 0 });
+  transitions.push({ time: -Infinity, which: 0 });
   transitions.push({ time: Infinity, which: 0 });
 }
 
@@ -103,7 +103,7 @@ for (let ii = 0; ii < transitions.length; ++ii) {
   }
 }
 
-if (out.transitions[0]) {
+if (out.transitions[0] > 0) {
   // Assume alternating and start at the other
   out.transitions.splice(0, 0, 0, out.transitions[3]);
 }
