@@ -33,10 +33,9 @@ doit('setDate', 8);
 // JE: 2018-04-10: These are not a valid date (setting 2:30am when clocks go from
 //  1:59am to 3am on that day), and for some reason we no longer behave exactly
 //  like Node, so just disabling this test for now.
-// Node treats these timestamps as standard time, whereas mock-timezone treats them as Daylight time.
-doit('setHours', 2);
+doit('setHours', 2, true);
 doit('setHours', 3);
-doit('setHours', 2);
+doit('setHours', 2, true);
 doit('setHours', 1);
 
 doit('setMonth', 9);
@@ -48,19 +47,19 @@ doit('setHours', 1);
 doit('setHours', 2);
 doit('setHours', 1);
 
-// function randInt(max) {
-//   return Math.floor(Math.random() * max);
-// }
-// for (var ii = 0; ii < 100000; ++ii) {
-//   switch (randInt(3)) { // eslint-disable-line default-case
-//     case 0:
-//       doit('setMonth', randInt(12));
-//       break;
-//     case 1:
-//       doit('setDate', randInt(28) + 1);
-//       break;
-//     case 2:
-//       doit('setHours', randInt(24));
-//       break;
-//   }
-// }
+function randInt(max) {
+  return Math.floor(Math.random() * max);
+}
+for (var ii = 0; ii < 100000; ++ii) {
+  switch (randInt(3)) { // eslint-disable-line default-case
+    case 0:
+      doit('setMonth', randInt(12));
+      break;
+    case 1:
+      doit('setDate', randInt(28) + 1);
+      break;
+    case 2:
+      doit('setHours', randInt(24));
+      break;
+  }
+}
