@@ -10,12 +10,12 @@ export type TimeZone = typeof timeZones[number];
 
 // Be sure to keep this in sync with the time zone definitions in tzdata.js
 export const timeZones: readonly [
-  'Australia/Adelaide',
-  'Brazil/East',
-  'Europe/London',
-  'US/Eastern',
-  'US/Pacific',
   'UTC',
+  'Europe/London',
+  'US/Pacific',
+  'US/Eastern',
+  'Brazil/East',
+  'Australia/Adelaide',
   'Etc/GMT+12',
   'Etc/GMT+11',
   'Etc/GMT+10',
