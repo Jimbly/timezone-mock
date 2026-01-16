@@ -1,0 +1,18 @@
+{
+  "files": [
+    "index.d.ts",
+    "tests/test-types.ts"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "erasableSyntaxOnly": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "checkJs": true,
+    "lib": []
+  }
+}
