@@ -3,6 +3,7 @@
 var assert = require('assert');
 var tzdata = require('./lib/tzdata.js');
 exports.tzdata = tzdata;
+exports.timeZones = Object.keys(tzdata);
 
 var _Date = null;
 exports._Date = Date;
