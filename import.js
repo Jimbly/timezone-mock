@@ -13,8 +13,19 @@
 const assert = require('assert');
 const fs = require('fs');
 
-function emitTimeZoneData(tzpath) {
+// Mapping from the names we expose to tzdata.js to the names on Ubuntu
+const aliases = {
+  'US/Pacific': 'PST8PDT',
+  'US/Eastern': 'EST5EDT',
+  'Brazil/East': 'America/Sao_Paulo',
+};
 
+function emitTimeZoneData(tzpath) {
+  if (!fs.existsSync(tzpath)) {
+    for (let key in aliases) {
+      tzpath = tzpath.replace(key, aliases[key]);
+    }
+  }
   let tzfile = fs.readFileSync(tzpath);
 
   let idx = 0;
@@ -119,10 +130,10 @@ function emitTimeZoneData(tzpath) {
     out.transitions.push(Infinity, out.transitions[out.transitions.length - 1]);
   }
 
-  const zoneName = tzpath.split('zoneinfo/')[1]
-    .replace('PST8PDT', 'US/Pacific')
-    .replace('EST5EDT', 'US/Eastern')
-    .replace('America/Sao_Paulo', 'Brazil/East');
+  let zoneName = tzpath.split('zoneinfo/')[1];
+  for (let key in aliases) {
+    zoneName = zoneName.replace(aliases[key], key);
+  }
   console.log(`  '${zoneName}': {`);
   console.log(`    names: [${out.names.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')}],`);
   console.log('    transitions: [');
