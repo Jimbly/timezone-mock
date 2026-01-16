@@ -14,9 +14,10 @@ timezone_mock.register('US/Pacific');
 var orig = new timezone_mock._Date(0);
 var mock = new Date(0);
 function doit(fn, val, fails) {
-  var ret_orig = orig[fn](val);
-  var ret_mock = mock[fn](val);
-  console.log(fn, val, orig, mock);
+  const args = typeof val === 'object' ? val : [val]
+  var ret_orig = orig[fn](...args);
+  var ret_mock = mock[fn](...args);
+  console.log(fn, val.toString(), orig, mock);
   if (!fails) {
     assert.equal(ret_orig, ret_mock);
     assert.equal(orig.getTime(), mock.getTime());
@@ -63,3 +64,13 @@ for (var ii = 0; ii < 100000; ++ii) {
       break;
   }
 }
+doit('setFullYear', [2023, 2, 13]);
+doit('setFullYear', [2023, 2]);
+doit('setMonth', [1, 2]);
+doit('setHours', [23, 59, 23, 987]);
+doit('setHours', [2, 23, 10]);
+doit('setHours', [0, 18]);
+doit('setMinutes', [43, 54, 123]);
+doit('setMinutes', [12, 15]);
+doit('setSeconds', [23, 768]);
+
