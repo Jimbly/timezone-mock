@@ -31,7 +31,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "test": "node tests/test-constructors.js && tsc && tsx tests/test-types.ts",
+    "test": "find tests -name 'test-*.js' -print0 | xargs -0 -n 1 -t node && tsc && tsx tests/test-types.ts",
     "lint": "eslint index.js"
   }
 }

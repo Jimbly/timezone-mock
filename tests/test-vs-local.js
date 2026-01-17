@@ -4,9 +4,6 @@ var timezone_mock = require('../');
 //////////////////////////////////////////////////////////////////////////
 // Test that the mocked date behaves exactly the same as the system date when
 //   mocking the same timezone.
-// JE: 2017-05-26, Node 6.9.1: This test seems to fail when specifying non-
-//   existent dates (undefined behavior anyway), not sure if this was working
-//   before or not.
 
 if (!new timezone_mock._Date().toString().match(/\(PDT\)|\(PST\)|\(Pacific Daylight Time\)|\(Pacific Standard Time\)/)) {
   // Because we only have timezone info for a couple timezones, we can only test
@@ -17,22 +14,6 @@ if (!new timezone_mock._Date().toString().match(/\(PDT\)|\(PST\)|\(Pacific Dayli
 }
 
 timezone_mock.register('US/Pacific');
-
-// function test(d) {
-//   var ret = [];
-//   ret.push(d.getTimezoneOffset());
-//   ret.push(d.getHours());
-//   d.setTime(new Date('2015-03-08T02:30:11.000Z').getTime());
-//   ret.push(d.getTimezoneOffset());
-//   ret.push(d.getHours());
-//   d.setTime(new Date('2015-03-07T02:30:11.000Z').getTime());
-//   ret.push(d.getTimezoneOffset());
-//   ret.push(d.getHours());
-//   d.setTime(new Date('2015-03-09T02:30:11.000Z').getTime());
-//   ret.push(d.getTimezoneOffset());
-//   ret.push(d.getHours());
-//   return ret;
-// }
 
 var orig = new timezone_mock._Date();
 var mock = new Date();
