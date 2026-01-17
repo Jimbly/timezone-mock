@@ -11,6 +11,7 @@ exports._Date = Date;
 var mockDateOptions = {};
 
 var timezone;
+var offsets;
 
 var weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -20,7 +21,7 @@ var HOUR = 60 * 60 * 1000;
 var date_iso_8601_regex = /^\d\d\d\d(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d\d\d)?(\d\d\d)?(Z|[+-]\d\d:?\d\d))?)?)?$/;
 var date_with_offset = /^\d\d\d\d-\d\d-\d\d( \d\d:\d\d:\d\d(\.\d\d\d)? )?(Z|(-|\+|)\d\d:\d\d)$/;
 var date_rfc_2822_regex = /^\d\d-\w\w\w-\d\d\d\d \d\d:\d\d:\d\d (\+|-)\d\d\d\d$/;
-var local_date_regex = /^\d\d\d\d-\d\d-\d\d[T ]\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/;
+var local_date_regex = /^(\d\d\d\d)-(\d\d)-(\d\d)[T ](\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?$/;
 var local_GMT_regex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d GMT$/;
 
 function MockDate(param) {
@@ -30,6 +31,7 @@ function MockDate(param) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
+      let localDateMatch;
       if (param.match(date_iso_8601_regex) ||
         param.match(date_with_offset) ||
         param.match(date_rfc_2822_regex) ||
@@ -37,9 +39,15 @@ function MockDate(param) {
         param === ''
       ) {
         this.d = new _Date(param);
-      } else if (param.match(local_date_regex)) {
+      } else if (localDateMatch = param.match(local_date_regex)) {
+        // FYI, if() condition assigns and then checks nullish; not logical comparison
+        const segments = localDateMatch
+          .slice(1)
+          .filter(g => g !== undefined)
+          .map((n) => Number.parseInt(n));
+        segments[1]--; // Correct month to monthIndex
         this.d = new _Date();
-        this.fromLocal(new _Date(param.replace(' ', 'T') + 'Z'));
+        this.fromLocal(...segments);
       } else if (mockDateOptions.fallbackFn) {
         this.d = mockDateOptions.fallbackFn(param);
       } else {
@@ -54,8 +62,17 @@ function MockDate(param) {
     }
   } else {
     this.d = new _Date();
-    this.fromLocal(new _Date(_Date.UTC.apply(null, arguments)));
+    this.fromLocal(...arguments);
   }
+}
+
+function getAllOffsets(timezone) {
+  return tzdata[timezone].transitions.reduce((acc, o, i) => {
+    if (i % 2 === 1 && !acc.includes(o)) {
+      acc.push(o);
+    }
+    return acc;
+  }, []);
 }
 
 // eslint-disable-next-line consistent-return
@@ -91,6 +108,7 @@ function passthrough(fn) {
     return real_date[fn].apply(real_date, arguments);
   };
 }
+
 function localgetter(fn) {
   MockDate.prototype[fn] = function () {
     if (Number.isNaN(this.d.getTime())) {
@@ -100,19 +118,95 @@ function localgetter(fn) {
     return d['getUTC' + fn.slice(3)]();
   };
 }
-MockDate.prototype.fromLocal = function (d) {
-  // From a Date object in the fake-timezone where the returned UTC values are
-  //   meant to be interpreted as local values.
-  this.d.setTime(d.getTime() + this.calcTZO(d.getTime() + this.calcTZO(d.getTime()) * HOUR) * HOUR);
-};
+
 function localsetter(fn) {
+  function getArgsToUse(settableProps, propToSet, calledWithArgs) {
+    const i = settableProps.indexOf(propToSet);
+    let args = settableProps.map(p => this.d['get' + p]());
+    for (let j = 0; j < calledWithArgs.length && i >= 0; j++) {
+      args[j + i] = calledWithArgs[j]
+    }
+    return args;
+  }
+
   MockDate.prototype[fn] = function () {
-    var d = new _Date(this.d.getTime() - this.calcTZO() * HOUR);
-    d['setUTC' + fn.slice(3)].apply(d, arguments);
-    this.fromLocal(d);
+    const propToSet = fn.slice(3);
+    let dateArgs = getArgsToUse.call(this, dateProps, propToSet, arguments);
+    let timeArgs = getArgsToUse.call(this, timeProps, propToSet, arguments);
+    this.fromLocal(...dateArgs, ...timeArgs);
     return this.getTime();
   };
 }
+
+/** Convert a local timestamp to a Unix time
+ *
+ * Matches Node.js behavior for handling invalid or ambiguous times.
+ *
+ * Arguments are the individual date and time component values for the
+ * local time: year, monthIndex (January = 0), day, hour, minute,
+ * second, millisecond; just as in the corresponding `Date` constructor.
+ *
+ * A local timestamp usually describes exactly one instant, but it can
+ * match zero or more instants if its representation falls around a UTC
+ * offset change.
+ *
+ * For example, the timestamp 2015-11-01T01:30:00 corresponds to two
+ * Unix times if interpreted in a U.S. time zone, because U.S. clocks
+ * were set backward from 02:00 Daylight Time to 01:00 Standard Time.
+ *
+ * Conversely, 2015-03-08T02:30:00 does not refer to any valid U.S. time
+ * at all -- Standard Time ends at 02:00 and Daylight Time begins at
+ * 03:00.
+ *
+ * When attempting to set the local time to a time falling within an
+ * offset transition (usually daylight saving time), we follow the
+ * EcmaScript specification.
+ *
+ * Ecma International. _EcmaScript 2025 Language Specification_. 16th
+ *   edition. ed. Kevin Gibbons. (2025).  https://tc39.es/ecma262/#sec-intro.
+ *   Section 21.4.1.26 ("UTC (t)"), p. 483.
+ *
+ * Human-readable explanation from MDN:
+ *   > When attempting to set the local time to a time falling within an
+ *   > offset transition (usually daylight saving time), the exact time is
+ *   > derived using the same behavior as Temporal's disambiguation:
+ *   > "compatible" option. That is, if the local time corresponds to two
+ *   > instants, the earlier one is chosen; if the local time does not exist
+ *   > (there is a gap), we go forward by the gap duration.
+ *
+ * JavaScript Reference, Mozilla Developer Network, "Date", accessed 16
+ * January 2026,
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_components_and_time_zones.
+ *
+ * A similar phenomenon occurs around leap seconds, but we do not
+ * account for those.
+ * */
+MockDate.prototype.fromLocal = function () {
+  this.d.setTime(
+    offsets.reduce(([acc, correctOffset], o) => {
+      const ts = _Date.UTC(...arguments) - (o * HOUR);
+      if (-this.calcTZO(ts) === o) {
+        return [correctOffset === false || ts < acc ? ts : acc, true];
+      } else {
+        return [correctOffset === false && ts > acc ? ts : acc, false];
+      }
+    }, [null, false])[0]
+  );
+}
+
+const dateProps = [
+  'FullYear',
+  'Month',
+  'Date',
+];
+
+const timeProps = [
+  'Hours',
+  'Minutes',
+  'Seconds',
+  'Milliseconds',
+];
+
 [
   'getUTCDate',
   'getUTCDay',
@@ -138,24 +232,16 @@ function localsetter(fn) {
   'valueOf',
 ].forEach(passthrough);
 [
-  'getDate',
-  'getDay',
-  'getFullYear',
-  'getHours',
-  'getMilliseconds',
-  'getMinutes',
-  'getMonth',
-  'getSeconds',
-].forEach(localgetter);
+  ...dateProps,
+  ...timeProps,
+  'Day',
+].map(s => 'get' + s)
+  .forEach(localgetter);
 [
-  'setDate',
-  'setFullYear',
-  'setHours',
-  'setMilliseconds',
-  'setMinutes',
-  'setMonth',
-  'setSeconds',
-].forEach(localsetter);
+  ...dateProps,
+  ...timeProps,
+].map(s => 'set' + s)
+  .forEach(localsetter);
 
 MockDate.prototype.getYear = function () {
   return this.getFullYear() - 1900;
@@ -223,7 +309,7 @@ MockDate.prototype.toDateString = function () {
 };
 
 MockDate.prototype.toLocaleString = function (locales, opts) {
-  opts = Object.assign({ timeZone: timezone }, opts);
+  opts = Object.assign({timeZone: timezone}, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -232,7 +318,7 @@ MockDate.prototype.toLocaleString = function (locales, opts) {
 };
 
 MockDate.prototype.toLocaleDateString = function (locales, opts) {
-  opts = Object.assign({ timeZone: timezone }, opts);
+  opts = Object.assign({timeZone: timezone}, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -241,7 +327,7 @@ MockDate.prototype.toLocaleDateString = function (locales, opts) {
 };
 
 MockDate.prototype.toLocaleTimeString = function (locales, opts) {
-  opts = Object.assign({ timeZone: timezone }, opts);
+  opts = Object.assign({timeZone: timezone}, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -255,9 +341,11 @@ MockDate.prototype.toLocaleTimeString = function (locales, opts) {
 function options(opts) {
   mockDateOptions = opts || {};
 }
+
 exports.options = options;
 
 var orig_object_toString;
+
 function mockDateObjectToString() {
   if (this instanceof MockDate) {
     // Look just like a regular Date to anything doing very low-level Object.prototype.toString calls
@@ -276,6 +364,13 @@ function register(new_timezone, glob) {
     }
   }
   timezone = new_timezone || 'US/Pacific';
+  offsets = getAllOffsets(timezone);
+  tzdata[timezone].transitions.reduce((acc, o, i) => {
+    if (i % 2 === 1 && !acc.includes(o)) {
+      acc.push(o);
+    }
+    return acc;
+  }, [])
   if (glob.Date !== MockDate) {
     _Date = glob.Date;
     exports._Date = glob.Date;
@@ -286,6 +381,7 @@ function register(new_timezone, glob) {
     Object.prototype.toString = mockDateObjectToString;
   }
 }
+
 exports.register = register;
 
 function unregister(glob) {
@@ -301,4 +397,5 @@ function unregister(glob) {
     glob.Date = _Date;
   }
 }
+
 exports.unregister = unregister;

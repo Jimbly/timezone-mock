@@ -63,9 +63,9 @@ test('date constructors as used by local timezone mode in node-mysql (local stri
   assert.equal(1425807000000, new Date(test_str).getTime());
   assert.equal(new Date(test_str).getTime(), new Date(test_str).valueOf());
   assert.equal(1425807000000, new Date(2015, 2, 8, 1, 30, 0, 0).getTime());
-  test_str = '2015-03-08 02:30:00.000'; // doesn't exist, ends up 1:30am
-  assert.equal(1425807000000, new Date(test_str).getTime());
-  assert.equal(1425807000000, new Date(2015, 2, 8, 2, 30, 0, 0).getTime());
+  test_str = '2015-03-08 02:30:00.000'; // doesn't exist (Spring Forward); go forward by an hour
+  assert.equal(1425810600000, new Date(test_str).getTime());
+  assert.equal(1425810600000, new Date(2015, 2, 8, 2, 30, 0, 0).getTime());
   test_str = '2015-03-08 03:30:00.000'; // in PDT
   assert.equal(1425810600000, new Date(test_str).getTime());
   assert.equal(1425810600000, new Date(2015, 2, 8, 3, 30, 0, 0).getTime());
@@ -148,10 +148,10 @@ test('some generic properties about the date object', function() {
 
 //////////////////////////////////////////////////////////////////////////
 test('Brazil timezone oddities', function() {
-  var test_str = '2017-10-15 00:00:00.000'; // Midnight on this day doesn't exist, jumps to 11PM previous day
+  var test_str = '2017-10-15 00:00:00.000'; // Midnight on this day doesn't exist; transition forward
   timezone_mock.register('Brazil/East');
-  assert.equal(1508032800000, new Date(test_str).getTime());
-  assert.equal(1508032800000, new Date(2017, 9, 15, 0, 0, 0, 0).getTime());
+  assert.equal(1508036400000, new Date(test_str).getTime());
+  assert.equal(1508036400000, new Date(2017, 9, 15, 0, 0, 0, 0).getTime());
 
   // Some dates after DST was abolished
   assert.equal(1577847600000, new Date('2020-01-01 00:00:00.000').getTime());
