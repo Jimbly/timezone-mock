@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/node": "^25.0.9",
     "eslint": "^6.8.0",
-    "tsx": "^4.21.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.9.3"
   },
   "scripts": {
