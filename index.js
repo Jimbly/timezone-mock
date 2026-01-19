@@ -31,7 +31,7 @@ function MockDate(param) {
     if (param instanceof MockDate) {
       this.d = new _Date(param.d);
     } else if (typeof param === 'string') {
-      let localDateMatch;
+      var localDateMatch;
       if (param.match(date_iso_8601_regex) ||
         param.match(date_with_offset) ||
         param.match(date_rfc_2822_regex) ||
@@ -39,15 +39,20 @@ function MockDate(param) {
         param === ''
       ) {
         this.d = new _Date(param);
+        // eslint-disable-next-line no-cond-assign
       } else if (localDateMatch = param.match(local_date_regex)) {
         // FYI, if() condition assigns and then checks nullish; not logical comparison
-        const segments = localDateMatch
+        var segments = localDateMatch
           .slice(1)
-          .filter(g => g !== undefined)
-          .map((n) => Number.parseInt(n));
+          .filter(function (g) {
+            return g !== undefined;
+          })
+          .map(function (n) {
+            return Number.parseInt(n, 10);
+          });
         segments[1]--; // Correct month to monthIndex
         this.d = new _Date();
-        this.fromLocal(...segments);
+        this.fromLocal.apply(this, segments);
       } else if (mockDateOptions.fallbackFn) {
         this.d = mockDateOptions.fallbackFn(param);
       } else {
@@ -62,12 +67,12 @@ function MockDate(param) {
     }
   } else {
     this.d = new _Date();
-    this.fromLocal(...arguments);
+    this.fromLocal.apply(this, arguments);
   }
 }
 
-function getAllOffsets(timezone) {
-  return tzdata[timezone].transitions.reduce((acc, o, i) => {
+function getAllOffsets(timezoneName) {
+  return tzdata[timezoneName].transitions.reduce(function (acc, o, i) {
     if (i % 2 === 1 && !acc.includes(o)) {
       acc.push(o);
     }
@@ -119,93 +124,101 @@ function localgetter(fn) {
   };
 }
 
-function localsetter(fn) {
-  function getArgsToUse(settableProps, propToSet, calledWithArgs) {
-    const i = settableProps.indexOf(propToSet);
-    let args = settableProps.map(p => this.d['get' + p]());
-    for (let j = 0; j < calledWithArgs.length && i >= 0; j++) {
-      args[j + i] = calledWithArgs[j]
-    }
-    return args;
-  }
-
-  MockDate.prototype[fn] = function () {
-    const propToSet = fn.slice(3);
-    let dateArgs = getArgsToUse.call(this, dateProps, propToSet, arguments);
-    let timeArgs = getArgsToUse.call(this, timeProps, propToSet, arguments);
-    this.fromLocal(...dateArgs, ...timeArgs);
-    return this.getTime();
-  };
-}
-
-/** Convert a local timestamp to a Unix time
- *
- * Matches Node.js behavior for handling invalid or ambiguous times.
- *
- * Arguments are the individual date and time component values for the
- * local time: year, monthIndex (January = 0), day, hour, minute,
- * second, millisecond; just as in the corresponding `Date` constructor.
- *
- * A local timestamp usually describes exactly one instant, but it can
- * match zero or more instants if its representation falls around a UTC
- * offset change.
- *
- * For example, the timestamp 2015-11-01T01:30:00 corresponds to two
- * Unix times if interpreted in a U.S. time zone, because U.S. clocks
- * were set backward from 02:00 Daylight Time to 01:00 Standard Time.
- *
- * Conversely, 2015-03-08T02:30:00 does not refer to any valid U.S. time
- * at all -- Standard Time ends at 02:00 and Daylight Time begins at
- * 03:00.
- *
- * When attempting to set the local time to a time falling within an
- * offset transition (usually daylight saving time), we follow the
- * EcmaScript specification.
- *
- * Ecma International. _EcmaScript 2025 Language Specification_. 16th
- *   edition. ed. Kevin Gibbons. (2025).  https://tc39.es/ecma262/#sec-intro.
- *   Section 21.4.1.26 ("UTC (t)"), p. 483.
- *
- * Human-readable explanation from MDN:
- *   > When attempting to set the local time to a time falling within an
- *   > offset transition (usually daylight saving time), the exact time is
- *   > derived using the same behavior as Temporal's disambiguation:
- *   > "compatible" option. That is, if the local time corresponds to two
- *   > instants, the earlier one is chosen; if the local time does not exist
- *   > (there is a gap), we go forward by the gap duration.
- *
- * JavaScript Reference, Mozilla Developer Network, "Date", accessed 16
- * January 2026,
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_components_and_time_zones.
- *
- * A similar phenomenon occurs around leap seconds, but we do not
- * account for those.
- * */
-MockDate.prototype.fromLocal = function () {
-  this.d.setTime(
-    offsets.reduce(([acc, correctOffset], o) => {
-      const ts = _Date.UTC(...arguments) - (o * HOUR);
-      if (-this.calcTZO(ts) === o) {
-        return [correctOffset === false || ts < acc ? ts : acc, true];
-      } else {
-        return [correctOffset === false && ts > acc ? ts : acc, false];
-      }
-    }, [null, false])[0]
-  );
-}
-
-const dateProps = [
+var dateProps = [
   'FullYear',
   'Month',
   'Date',
 ];
 
-const timeProps = [
+var timeProps = [
   'Hours',
   'Minutes',
   'Seconds',
   'Milliseconds',
 ];
+
+function localsetter(fn) {
+  function getArgsToUse(date, settableProps, propToSet, calledWithArgs) {
+    var i = settableProps.indexOf(propToSet);
+    var args = settableProps.map(function (p) {
+      return date['get' + p]();
+    });
+    if (i >= 0) {
+      for (var j = 0; j < calledWithArgs.length; j++) {
+        args[j + i] = calledWithArgs[j];
+      }
+    }
+    return args;
+  }
+
+  MockDate.prototype[fn] = function () {
+    var propToSet = fn.slice(3);
+    var dateArgs = getArgsToUse(this.d, dateProps, propToSet, arguments);
+    var timeArgs = getArgsToUse(this.d, timeProps, propToSet, arguments);
+    this.fromLocal.apply(this, dateArgs.concat(timeArgs));
+    return this.getTime();
+  };
+}
+
+// Convert a local timestamp to a Unix time
+//
+// Matches Node.js behavior for handling invalid or ambiguous times.
+//
+// Arguments are the individual date and time component values for the
+// local time: year, monthIndex (January = 0), day, hour, minute,
+// second, millisecond; just as in the corresponding `Date` constructor.
+//
+// A local timestamp usually describes exactly one instant, but it can
+// match zero or more instants if its representation falls around a UTC
+// offset change.
+//
+// For example, the timestamp 2015-11-01T01:30:00 corresponds to two
+// Unix times if interpreted in a U.S. time zone, because U.S. clocks
+// were set backward from 02:00 Daylight Time to 01:00 Standard Time.
+//
+// Conversely, 2015-03-08T02:30:00 does not refer to any valid U.S. time
+// at all -- Standard Time ends at 02:00 and Daylight Time begins at
+// 03:00.
+//
+// When attempting to set the local time to a time falling within an
+// offset transition (usually daylight saving time), we follow the
+// EcmaScript specification.
+//
+// Ecma International. _EcmaScript 2025 Language Specification_. 16th
+//    edition. ed. Kevin Gibbons. (2025).  https://tc39.es/ecma262/#sec-intro.
+//    Section 21.4.1.26 ("UTC (t)"), p. 483.
+//
+// Human-readable explanation from MDN:
+//    > When attempting to set the local time to a time falling within an
+//    > offset transition (usually daylight saving time), the exact time is
+//    > derived using the same behavior as Temporal's disambiguation:
+//    > "compatible" option. That is, if the local time corresponds to two
+//    > instants, the earlier one is chosen; if the local time does not exist
+//    > (there is a gap), we go forward by the gap duration.
+//
+// JavaScript Reference, Mozilla Developer Network, "Date", accessed 16
+// January 2026,
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_components_and_time_zones.
+//
+// A similar phenomenon occurs around leap seconds, but we do not
+// account for those.
+//
+MockDate.prototype.fromLocal = function () {
+  var localComponents = arguments;
+  var mockDate = this;
+  this.d.setTime(
+    offsets.reduce(function (acc, o) {
+      var bestTs = acc[0];
+      var correctOffset = acc[1];
+      var ts = _Date.UTC.apply(null, localComponents) - (o * HOUR);
+      if (-mockDate.calcTZO(ts) === o) {
+        return [correctOffset === false || ts < bestTs ? ts : bestTs, true];
+      }
+      return [correctOffset === false && ts > bestTs ? ts : bestTs, false];
+
+    }, [null, false])[0]
+  );
+};
 
 [
   'getUTCDate',
@@ -231,16 +244,21 @@ const timeProps = [
   'toUTCString',
   'valueOf',
 ].forEach(passthrough);
-[
-  ...dateProps,
-  ...timeProps,
-  'Day',
-].map(s => 'get' + s)
+
+dateProps
+  .concat(timeProps)
+  .concat('Day')
+  .map(function (s) {
+    return 'get' + s;
+  })
   .forEach(localgetter);
-[
-  ...dateProps,
-  ...timeProps,
-].map(s => 'set' + s)
+
+
+dateProps
+  .concat(timeProps)
+  .map(function (s) {
+    return 'set' + s;
+  })
   .forEach(localsetter);
 
 MockDate.prototype.getYear = function () {
@@ -309,7 +327,7 @@ MockDate.prototype.toDateString = function () {
 };
 
 MockDate.prototype.toLocaleString = function (locales, opts) {
-  opts = Object.assign({timeZone: timezone}, opts);
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -318,7 +336,7 @@ MockDate.prototype.toLocaleString = function (locales, opts) {
 };
 
 MockDate.prototype.toLocaleDateString = function (locales, opts) {
-  opts = Object.assign({timeZone: timezone}, opts);
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -327,7 +345,7 @@ MockDate.prototype.toLocaleDateString = function (locales, opts) {
 };
 
 MockDate.prototype.toLocaleTimeString = function (locales, opts) {
-  opts = Object.assign({timeZone: timezone}, opts);
+  opts = Object.assign({ timeZone: timezone }, opts);
   var time = this.d.getTime();
   if (Number.isNaN(time)) {
     return new _Date('').toDateString();
@@ -365,12 +383,6 @@ function register(new_timezone, glob) {
   }
   timezone = new_timezone || 'US/Pacific';
   offsets = getAllOffsets(timezone);
-  tzdata[timezone].transitions.reduce((acc, o, i) => {
-    if (i % 2 === 1 && !acc.includes(o)) {
-      acc.push(o);
-    }
-    return acc;
-  }, [])
   if (glob.Date !== MockDate) {
     _Date = glob.Date;
     exports._Date = glob.Date;
