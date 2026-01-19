@@ -31,10 +31,7 @@ doit('setHours', 0);
 doit('setMonth', 2);
 doit('setDate', 1);
 doit('setDate', 8);
-// JE: 2018-04-10: These are not a valid date (setting 2:30am when clocks go from
-//  1:59am to 3am on that day), and for some reason we no longer behave exactly
-//  like Node, so just disabling this test for now.
-doit('setHours', 2);
+doit('setHours', 2); // Spring Forward 2015
 doit('setHours', 3);
 doit('setHours', 2);
 doit('setHours', 1);
@@ -42,7 +39,7 @@ doit('setHours', 1);
 doit('setMonth', 9);
 doit('setDate', 1);
 doit('setHours', 1);
-doit('setMonth', 10);
+doit('setMonth', 10); // Fall Back 2015
 doit('setHours', 0);
 doit('setHours', 1);
 doit('setHours', 2);
