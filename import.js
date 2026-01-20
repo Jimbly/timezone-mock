@@ -49,7 +49,7 @@ function emitTimeZoneData(tzpath) {
 
   let transitions = [];
   for (let ii = 0; ii < tzh_timecnt; ++ii) {
-    transitions.push({time: tzfile.readUInt32BE(idx)});
+    transitions.push({ time: tzfile.readUInt32BE(idx) });
     idx += 4;
   }
 
@@ -101,8 +101,8 @@ function emitTimeZoneData(tzpath) {
 
   // add transitions for the first and last timestamps if the time zone doesn't have DST transitions
   if (!transitions.length) {
-    transitions.push({time: -Infinity, which: 0});
-    transitions.push({time: Infinity, which: 0});
+    transitions.push({ time: -Infinity, which: 0 });
+    transitions.push({ time: Infinity, which: 0 });
   }
 
   let named = {};
@@ -147,7 +147,10 @@ function emitTimeZoneData(tzpath) {
 function main() {
   console.log(
     `// Generated this data from mysql_tzinfo_to_sql included with MySQL and the
-// tzinfo file on OSX.\n\nmodule.exports = {`
+// tzinfo file on OSX.
+
+// Be sure to keep this in sync with the type definitions at index.d.ts
+module.exports = {`
   );
   if (process.argv.length < 3) {
     // We require tzdata only in this branch, since without arguments
