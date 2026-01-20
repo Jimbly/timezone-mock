@@ -17,7 +17,7 @@ function doit(fn, val, fails) {
   const args = typeof val === 'object' ? val : [val]
   var ret_orig = orig[fn](...args);
   var ret_mock = mock[fn](...args);
-  console.log(fn, val.toString(), orig, mock);
+  // console.log(fn, val.toString(), orig, mock);
   if (!fails) {
     assert.equal(ret_orig, ret_mock);
     assert.equal(orig.getTime(), mock.getTime());
@@ -55,9 +55,22 @@ doit('setMinutes', [43, 54, 123]);
 doit('setMinutes', [12, 15]);
 doit('setSeconds', [23, 768]);
 
-function randInt(max) {
-  return Math.floor(Math.random() * max);
+// "Quick and dirty" 32-bit LCG with parameters attributed to Knuth.
+//
+// William H. Press, Saul A. Teukolsky, William T. Vetterling, and
+// Brian P. Flannery. Numerical Recipes in C. 2nd ed. (Cambridge:
+// Cambridge University Press, 2002), 284,
+// https://s3.amazonaws.com/nrbook.com/book_C210.html.
+let seed = 3425149915;
+if (seed !== 3425149915) {
+  console.log('test-setters seed = ' + seed)
 }
+const m = Math.pow(2, 32);
+function randInt(max) {
+  seed = (1664525 * seed + 1013904223) % m;
+  return Math.floor(seed / m * max);
+}
+
 for (var ii = 0; ii < 100000; ++ii) {
   switch (randInt(3)) { // eslint-disable-line default-case
     case 0:
