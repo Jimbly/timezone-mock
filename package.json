@@ -1,12 +1,12 @@
 {
   "name": "timezone-mock",
-  "version": "1.3.6",
+  "version": "1.4.0",
   "description": "A JavaScript library to mock the local timezone.",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jimbly/timezone-mock.git"
+    "url": "git+https://github.com/Jimbly/timezone-mock.git"
   },
   "keywords": [
     "timezone",
