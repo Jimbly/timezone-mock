@@ -9,4 +9,4 @@ const aus: TimeZone = 'Australia/Adelaide';
 const no_tz: TimeZone = 'notatimezone';
 
 const timeZones: readonly TimeZone[] = timezone_mock.timeZones;
-assert.strictEqual(timeZones.length, 35);
+assert.strictEqual(timeZones.length, 36);
