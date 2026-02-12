@@ -14,6 +14,7 @@ export const timeZones: readonly [
   'Europe/London',
   'US/Pacific',
   'US/Eastern',
+  'America/Anchorage',
   'Brazil/East',
   'Australia/Adelaide',
   'Etc/GMT+12',
