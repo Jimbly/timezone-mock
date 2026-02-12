@@ -153,8 +153,8 @@ function localsetter(fn) {
 
   MockDate.prototype[fn] = function () {
     var propToSet = fn.slice(3);
-    var dateArgs = getArgsToUse(this.d, dateProps, propToSet, arguments);
-    var timeArgs = getArgsToUse(this.d, timeProps, propToSet, arguments);
+    var dateArgs = getArgsToUse(this, dateProps, propToSet, arguments);
+    var timeArgs = getArgsToUse(this, timeProps, propToSet, arguments);
     this.fromLocal.apply(this, dateArgs.concat(timeArgs));
     return this.getTime();
   };
