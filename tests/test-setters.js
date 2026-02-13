@@ -122,16 +122,13 @@ function runRandom(mockOffset_h) {
 
   for (var ii = 0; ii < 100000; ++ii) {
 
-    // The tests assume the Mock/System offset is 3h, but that's not
-    // always true in March or November (but it is true of all other
+    // The tests assume the Mock/System offset is constant, but that's
+    // not always true in March or November (it is true of all other
     // months for US time zones since 2007)
     const uncoveredMonths = mockOffset_h === 0 ? [] : [2, 10]
 
     switch (randInt(3)) { // eslint-disable-line default-case
       case 0:
-        // If the real and mock system times are different, avoid March
-        // and November because the offset from PT to ET is not always
-        // 3 hours in those months.
         doit('setMonth', randInt(12, uncoveredMonths), false, mockOffset_h);
         break;
       case 1:
@@ -156,8 +153,9 @@ timezone_mock.unregister();
 
 timezone_mock.register('US/Eastern');
 // 2007 was the first year with the current US Daylight Saving Time
-// configuration, hence the first year for which we can assume a 3h
-// PT-ET offset (Energy Policy Act of 2005)
+// configuration, hence the first year for which we can safely assume a
+// particular relative offset between the System and Mock time zones.
+// (Energy Policy Act of 2005)
 orig = new timezone_mock._Date('2007-06-01T09:00:00-07:00');
 mock = new Date('2007-06-01T12:00:00-04:00');
 runRandom(3);
@@ -222,17 +220,17 @@ const cases = [
   ['America/Anchorage', '2025-11-03T12:00:00', 1, '2025-11-01T12:00:00-08:00'], // Clock un-changes backward
 
   // One offset changes, but the other offset doesn't
-  ['America/Anchorage', '2025-03-08T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // PT changes forward, AT doesn't
-  ['America/Anchorage', '2025-03-10T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // AT un-changes forward, PT doesn't
+  ['America/Anchorage', '2025-03-08T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // PT changes forward, AKT doesn't
+  ['America/Anchorage', '2025-03-10T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // AKT un-changes forward, PT doesn't
 
-  // Cannot test split PT/AT transitions, because the interval between the
-  // PT and AT transition is shorter than the magnitude of the transition itself.
-  // AT is the most negative zone that observes DST, so there's no way
+  // Cannot test split PT/AKT transitions, because the interval between the
+  // PT and AKT transition is shorter than the magnitude of the transition itself.
+  // AKT is the most negative zone that observes DST, so there's no way
   // to exercise this case as long as the tests run in US/Pacific.
-  // ['America/Anchorage', '2025-11-03T??:??:??',  2, '2025-11-02T??:??:??-08:00'], // AT un-changes backward, PT doesn't
+  // ['America/Anchorage', '2025-11-03T??:??:??',  2, '2025-11-02T??:??:??-08:00'], // AKT un-changes backward, PT doesn't
 
   // Can't cross a day boundary with this test; need at least 3 hours of relative offset
-  // ['America/Anchorage', '2025-11-01T00:59:00',  2, '2025-11-02T01:59:00-08:00'], // PT changes backward, AT doesn't
+  // ['America/Anchorage', '2025-11-01T00:59:00',  2, '2025-11-02T01:59:00-08:00'], // PT changes backward, AKT doesn't
 ];
 
 for (const c of cases) {
