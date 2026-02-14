@@ -210,7 +210,9 @@ MockDate.prototype.fromLocal = function () {
     offsets.reduce(function (acc, o) {
       var bestTs = acc[0];
       var correctOffset = acc[1];
-      var ts = _Date.UTC.apply(null, localComponents) - (o * HOUR);
+      var ts = new _Date(
+        _Date.UTC.apply(null, localComponents)
+      ).setUTCFullYear(localComponents[0]) - (o * HOUR);
       if (-mockDate.calcTZO(ts) === o) {
         return [correctOffset === false || ts < bestTs ? ts : bestTs, true];
       }

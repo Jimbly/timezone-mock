@@ -184,6 +184,22 @@ function testIssue78() {
 }
 testIssue78()
 
+function testTwoDigitFullYear()  {
+  timezone_mock.register("US/Pacific")
+  // For very old dates, Node uses mean solar time in Los Angeles
+  // rather than US standard times. timezone_mock does not emulate this,
+  // so we are off by 422 seconds here.
+  const fudgeFactor = 422000
+  const expected = new timezone_mock._Date(0)
+    .setFullYear(20) + fudgeFactor
+  const mock = new Date(0)
+
+  assert.equal(mock.setFullYear(20), expected)
+  assert.equal(mock.getTime(), expected)
+  timezone_mock.unregister()
+}
+testTwoDigitFullYear()
+
 // Hard-coded tests of tricky dates
 // Dimensions to test:
 // Mock TZ is ahead/behind System TZ (2 cases)
