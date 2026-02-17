@@ -1,0 +1,36 @@
+name: Test and Publish
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # Required for OIDC authentication
+
+jobs:
+  test-and-publish:
+    runs-on: ubuntu-24.04
+    container:
+      image: jimbly/timezone-mock-test:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.0'
+          # Must match the registry where trusted publishing is configured
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund --no-update-notifier
+
+      - name: Run tests
+        run: npm test
+
+      - name: Ensure latest npm # Fixes OIDC handshake issues
+        run: npm install -g npm@latest
+
+      - name: Publish to npm
+        # --provenance links the package to this specific GitHub run
+        run: npm publish --provenance
