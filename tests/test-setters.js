@@ -184,22 +184,6 @@ function testIssue78() {
 }
 testIssue78()
 
-function testTwoDigitFullYear()  {
-  timezone_mock.register("US/Pacific")
-  // For very old dates, Node uses mean solar time in Los Angeles
-  // rather than US standard times. timezone_mock does not emulate this,
-  // so we are off by 422 seconds here.
-  const fudgeFactor = 422000
-  const expected = new timezone_mock._Date(0)
-    .setFullYear(20) + fudgeFactor
-  const mock = new Date(0)
-
-  assert.equal(mock.setFullYear(20), expected)
-  assert.equal(mock.getTime(), expected)
-  timezone_mock.unregister()
-}
-testTwoDigitFullYear()
-
 // Hard-coded tests of tricky dates
 // Dimensions to test:
 // Mock TZ is ahead/behind System TZ (2 cases)
@@ -210,59 +194,70 @@ testTwoDigitFullYear()
 
 // Format: mock tz, local time at start, argument to setDate(), expected absolute time at end
 const cases = [
-  ['US/Eastern', '2025-01-11T12:00:00', 12, '2025-01-12T12:00:00-05:00'], // set forward by one day, nothing funny
-  ['US/Eastern', '2025-01-11T12:00:00', 10, '2025-01-10T12:00:00-05:00'], // set backward by one day
-  ['US/Eastern', '2025-01-11T01:00:00', 12, '2025-01-12T01:00:00-05:00'], // mock/real split across a day boundary
-  ['US/Eastern', '2025-01-11T01:00:00', 10, '2025-01-10T01:00:00-05:00'], // same, but set the day backward
-  ['US/Eastern', '2025-03-07T12:00:00', 11, '2025-03-11T12:00:00-04:00'], // Clock changes forward
-  ['US/Eastern', '2025-03-11T12:00:00', 7, '2025-03-07T12:00:00-05:00'], // Clock un-changes forward
-  ['US/Eastern', '2025-11-01T12:00:00', 3, '2025-11-03T12:00:00-05:00'], // Clock changes backward
-  ['US/Eastern', '2025-11-03T12:00:00', 1, '2025-11-01T12:00:00-04:00'], // Clock un-changes backward
+  ['US/Eastern', '2025-01-11T12:00:00', 'setDate', 12, '2025-01-12T12:00:00-05:00'], // set forward by one day, nothing funny
+  ['US/Eastern', '2025-01-11T12:00:00', 'setDate', 10, '2025-01-10T12:00:00-05:00'], // set backward by one day
+  ['US/Eastern', '2025-01-11T01:00:00', 'setDate', 12, '2025-01-12T01:00:00-05:00'], // mock/real split across a day boundary
+  ['US/Eastern', '2025-01-11T01:00:00', 'setDate', 10, '2025-01-10T01:00:00-05:00'], // same, but set the day backward
+  ['US/Eastern', '2025-03-07T12:00:00', 'setDate', 11, '2025-03-11T12:00:00-04:00'], // Clock changes forward
+  ['US/Eastern', '2025-03-11T12:00:00', 'setDate',  7, '2025-03-07T12:00:00-05:00'], // Clock un-changes forward
+  ['US/Eastern', '2025-11-01T12:00:00', 'setDate',  3, '2025-11-03T12:00:00-05:00'], // Clock changes backward
+  ['US/Eastern', '2025-11-03T12:00:00', 'setDate',  1, '2025-11-01T12:00:00-04:00'], // Clock un-changes backward
 
   // One offset changes, but the other offset doesn't
-  ['US/Eastern', '2025-03-08T03:30:00', 9, '2025-03-09T03:30:00-04:00'], // ET changes forward, PT doesn't
-  ['US/Eastern', '2025-03-10T03:30:00', 9, '2025-03-09T03:30:00-04:00'], // PT un-changes forward, ET doesn't
-  ['US/Eastern', '2025-11-03T02:30:00', 2, '2025-11-02T02:30:00-05:00'], // PT un-changes backward, ET doesn't
+  ['US/Eastern', '2025-03-08T03:30:00', 'setDate', 9, '2025-03-09T03:30:00-04:00'], // ET changes forward, PT doesn't
+  ['US/Eastern', '2025-03-10T03:30:00', 'setDate', 9, '2025-03-09T03:30:00-04:00'], // PT un-changes forward, ET doesn't
+  ['US/Eastern', '2025-11-03T02:30:00', 'setDate', 2, '2025-11-02T02:30:00-05:00'], // PT un-changes backward, ET doesn't
   // Also, this starting time splits real and mock across a day boundary (02:30 EDT / 23:30 PDT)
-  ['US/Eastern', '2025-11-01T02:30:00', 2, '2025-11-02T02:30:00-05:00'], // ET changes backward, PT doesn't
+  ['US/Eastern', '2025-11-01T02:30:00', 'setDate', 2, '2025-11-02T02:30:00-05:00'], // ET changes backward, PT doesn't
 
-  ['America/Anchorage', '2025-01-11T12:00:00', 12, '2025-01-12T12:00:00-09:00'], // set forward by one day, nothing funny
-  ['America/Anchorage', '2025-01-11T12:00:00', 10, '2025-01-10T12:00:00-09:00'], // set backward by one day
-  ['America/Anchorage', '2025-01-11T23:30:00', 11, '2025-01-11T23:30:00-09:00'], // mock/real split across a day boundary
-  ['America/Anchorage', '2025-01-11T23:30:00', 12, '2025-01-12T23:30:00-09:00'], // same, but set the day forward
-  ['America/Anchorage', '2025-03-07T12:00:00', 11, '2025-03-11T12:00:00-08:00'], // Clock changes forward
-  ['America/Anchorage', '2025-03-11T12:00:00', 7, '2025-03-07T12:00:00-09:00'], // Clock un-changes forward
-  ['America/Anchorage', '2025-11-01T12:00:00', 3, '2025-11-03T12:00:00-09:00'], // Clock changes backward
-  ['America/Anchorage', '2025-11-03T12:00:00', 1, '2025-11-01T12:00:00-08:00'], // Clock un-changes backward
+  ['America/Anchorage', '2025-01-11T12:00:00', 'setDate', 12, '2025-01-12T12:00:00-09:00'], // set forward by one day, nothing funny
+  ['America/Anchorage', '2025-01-11T12:00:00', 'setDate', 10, '2025-01-10T12:00:00-09:00'], // set backward by one day
+  ['America/Anchorage', '2025-01-11T23:30:00', 'setDate', 11, '2025-01-11T23:30:00-09:00'], // mock/real split across a day boundary
+  ['America/Anchorage', '2025-01-11T23:30:00', 'setDate', 12, '2025-01-12T23:30:00-09:00'], // same, but set the day forward
+  ['America/Anchorage', '2025-03-07T12:00:00', 'setDate', 11, '2025-03-11T12:00:00-08:00'], // Clock changes forward
+  ['America/Anchorage', '2025-03-11T12:00:00', 'setDate',  7, '2025-03-07T12:00:00-09:00'], // Clock un-changes forward
+  ['America/Anchorage', '2025-11-01T12:00:00', 'setDate',  3, '2025-11-03T12:00:00-09:00'], // Clock changes backward
+  ['America/Anchorage', '2025-11-03T12:00:00', 'setDate',  1, '2025-11-01T12:00:00-08:00'], // Clock un-changes backward
 
   // One offset changes, but the other offset doesn't
-  ['America/Anchorage', '2025-03-08T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // PT changes forward, AKT doesn't
-  ['America/Anchorage', '2025-03-10T01:30:00', 9, '2025-03-09T01:30:00-09:00'], // AKT un-changes forward, PT doesn't
+  ['America/Anchorage', '2025-03-08T01:30:00', 'setDate', 9, '2025-03-09T01:30:00-09:00'], // PT changes forward, AKT doesn't
+  ['America/Anchorage', '2025-03-10T01:30:00', 'setDate', 9, '2025-03-09T01:30:00-09:00'], // AKT un-changes forward, PT doesn't
 
   // Cannot test split PT/AKT transitions, because the interval between the
   // PT and AKT transition is shorter than the magnitude of the transition itself.
   // AKT is the most negative zone that observes DST, so there's no way
   // to exercise this case as long as the tests run in US/Pacific.
-  // ['America/Anchorage', '2025-11-03T??:??:??',  2, '2025-11-02T??:??:??-08:00'], // AKT un-changes backward, PT doesn't
+  // ['America/Anchorage', '2025-11-03T??:??:??', 'setDate', 2, '2025-11-02T??:??:??-08:00'], // AKT un-changes backward, PT doesn't
 
   // Can't cross a day boundary with this test; need at least 3 hours of relative offset
-  // ['America/Anchorage', '2025-11-01T00:59:00',  2, '2025-11-02T01:59:00-08:00'], // PT changes backward, AKT doesn't
+  // ['America/Anchorage', '2025-11-01T00:59:00', 'setDate', 2, '2025-11-02T01:59:00-08:00'], // PT changes backward, AKT doesn't
+
+  // setFullYear
+  ['US/Eastern', '2015-12-31T19:30:00-05:00', 'setFullYear', 2015, '2015-12-31T19:30:00-05:00'],  // Mock and UTC in different years
+  ['US/Eastern', '2015-12-31T19:30:00-05:00', 'setFullYear', 2016, '2016-12-31T19:30:00-05:00'],
+  ['US/Eastern', '2015-01-01T00:30:00-05:00', 'setFullYear', 2015, '2015-01-01T00:30:00-05:00'],  // System and Mock in different years
+  ['US/Eastern', '2015-01-01T00:30:00-05:00', 'setFullYear', 2016, '2016-01-01T00:30:00-05:00'],
+
+  // For very old dates, Node uses mean solar time in Los Angeles
+  // rather than US standard times. timezone_mock does not emulate this,
+  // so we are expecting to be off by 422 seconds here.
+  ['US/Pacific', '1970-01-01T00:00:00Z'     , 'setFullYear',   20, -61504445222000 + 422000 ]
 ];
 
 for (const c of cases) {
   testLocalSetterCase(...c);
 }
 
-function testLocalSetterCase(mockTz, startingLocal, newDate, expectedEnd) {
+function testLocalSetterCase(mockTz, start, fn, newValue, expectedEnd) {
   timezone_mock.register(mockTz)
-  const d = new Date(startingLocal);
+  const d = new Date(start);
   const t = new timezone_mock._Date(expectedEnd).getTime();
   try {
-    assert.equal(d.setDate(newDate), t)
+    assert.equal(d[fn](newValue), t)
     assert.equal(d.getTime(), t)
   } catch (e) {
     console.log(JSON.stringify({
-      mockTz, startingLocal, newDate,
+      mockTz, start: start, newDate: newValue,
       expectedEnd: new Date(expectedEnd).toISOString(),
       actualEnd: d.toISOString(),
     }, null, 2))
