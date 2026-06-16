@@ -210,9 +210,18 @@ MockDate.prototype.fromLocal = function () {
     offsets.reduce(function (acc, o) {
       var bestTs = acc[0];
       var correctOffset = acc[1];
-      var ts = new _Date(
-        _Date.UTC.apply(null, localComponents)
-      ).setUTCFullYear(localComponents[0]) - (o * HOUR);
+      // Date.UTC() maps years 0-99 to 1900-1999, so we must force the literal
+      // year back onto the result in that ambiguous range. For years >= 100 we
+      // must NOT do this: day/month overflow that legitimately advances the
+      // year (e.g. setDate(getDate() + N) / setMonth(getMonth() + N), as
+      // date-fns addDays/addMonths do) would otherwise be clamped back to the
+      // pre-overflow year, producing a result one or more years off.
+      // See https://github.com/Jimbly/timezone-mock/issues/82 and #83.
+      var utc = new _Date(_Date.UTC.apply(null, localComponents));
+      if (localComponents[0] >= 0 && localComponents[0] < 100) {
+        utc.setUTCFullYear(localComponents[0]);
+      }
+      var ts = utc.getTime() - (o * HOUR);
       if (-mockDate.calcTZO(ts) === o) {
         return [correctOffset === false || ts < bestTs ? ts : bestTs, true];
       }
