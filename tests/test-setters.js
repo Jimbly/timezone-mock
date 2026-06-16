@@ -241,7 +241,17 @@ const cases = [
   // For very old dates, Node uses mean solar time in Los Angeles
   // rather than US standard times. timezone_mock does not emulate this,
   // so we are expecting to be off by 422 seconds here.
-  ['US/Pacific', '1970-01-01T00:00:00Z'     , 'setFullYear',   20, -61504445222000 + 422000 ]
+  ['US/Pacific', '1970-01-01T00:00:00Z'     , 'setFullYear',   20, -61504445222000 + 422000 ],
+
+  // setDate()/setMonth() overflow that legitimately advances the year must not
+  // be clamped back to the pre-overflow year when the mock TZ and the literal
+  // UTC components fall in different years. Regressions reported in #82 and #83
+  // (date-fns addDays/addMonths roll the year via these overflowing setters).
+  // Local start is 2022-12-31 16:00 PST, so getDate() === 31 / getMonth() === 11.
+  ['US/Pacific', '2023-01-01T00:00:00Z', 'setDate', 131, '2023-04-10T23:00:00Z'], // #82: setDate(getDate()+100), year must advance to 2023
+  ['US/Pacific', '2023-01-01T00:00:00Z', 'setDate',  54, '2023-01-24T00:00:00Z'], // #83: setDate(getDate()+23), crosses into 2023
+  ['US/Pacific', '2023-01-01T00:00:00Z', 'setMonth', 12, '2023-02-01T00:00:00Z'], // setMonth overflow rolls Dec 2022 -> Jan 2023, year must advance
+  ['UTC',        '2025-01-15T00:00:00Z', 'setDate',  -1, '2024-12-30T00:00:00Z']  // #83: negative overflow rolls back into the previous year
 ];
 
 for (const c of cases) {
